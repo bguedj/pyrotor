@@ -2,64 +2,62 @@
 # -*- coding:utf-8 -*-
 
 """
-Transform trajectories into a discrete format
+Project trajectories into a discrete format
 """
 
 import numpy as np
 import pandas as pd
-from numpy.polynomial import legendre
+from numpy.polynomial.legendre import Legendre
 
 
-def trajectory_to_coef(y, duration, basis, var):
+def trajectory_to_coef(y, basis, basis_dimensions):
     """
-    Given states for one flight, compute coefficients of each state on a given
+    Given variables for one flight, compute coefficients of each variable on a given
     functional basis
 
     Inputs:
         - y: DataFrame
-            Contains recorded states of a flight - Index has to start at 0
-        - duration: int
-            Duration of the flight
+            Contains recorded variables of a flight - Index has to start at 0
         - basis: string
             Functional basis
-        - var: dict
-            Give the number of basis functions for each state
+        - basis_dimensions: dict
+            Give the number of basis functions for each variable
 
     Output:
         - c: list of pd.Series
-            Each element of the list contains coefficients of a state
+            Each element of the list contains the coefficients of a variable
     """
-    # Length of the time interval
-    T = duration
+    # Number of element
+    n = y.shape[0]
     c = []
-    # Compute coefficients for each state
-    for state in y.columns:
+    # Compute coefficients for each variable
+    for variable in y.columns:
         if basis == 'legendre':
             # NB: Use Legendre class to fix the domain of the basis
-            # Here consider each flight as defined on [0,1]
-            cl_c_state = legendre.Legendre.fit(y.index / T, y[state],
-                                            deg=var[state]-1, domain=[0, 1])
-            s = pd.Series(cl_c_state.coef, name=state)
+            # Here consider each trajectory to be defined on [0,1]
+            least_square_fit = Legendre.fit(y.index / n,
+                                            y[variable],
+                                            deg=basis_dimensions[variable]-1,
+                                            domain=[0, 1])
+            s = pd.Series(least_square_fit.coef, name=variable)
             c.append(s)
 
     return c
 
 
-def trajectories_to_coefs(y, durations, basis, var):
+def trajectories_to_coefs(y, basis, basis_dimensions):
     """
-    Given states for several flights, compute coefficients of each state of
+    Given variables for several flights, compute coefficients of each variable of
     each flight on a given functional basis
 
     Inputs:
         - y: list of DataFrame
-            Contains recorded states of several flight - Index has to start
+            Contains recorded variables of several flight - Index has to start
             at 0
-        - durations: list of int
-            Duration of each flight
         - basis: string
             Functional basis
-        - var: dict
-            Give the number of basis functions for each state
+        - basis_dimensions: dict
+            Give the number of basis functions for each variable
 
     Output:
         - c: list of pd.Series
@@ -70,7 +68,7 @@ def trajectories_to_coefs(y, durations, basis, var):
     coefs = []
     for i, y_i in enumerate(y):
         # Compute the coefficient of each flight
-        coef_i = traj_to_coef(y_i, durations[i], basis, var)
+        coef_i = trajectory_to_coef(y_i, basis, basis_dimensions)
         # Format into a numpy array
         coef_i = np.array([c for series in coef_i for c in series.values])
         coefs.append(coef_i)
@@ -78,61 +76,59 @@ def trajectories_to_coefs(y, durations, basis, var):
     return coefs
 
 
-def coef_to_trajectory(c, duration, basis, var):
+def coef_to_trajectory(c, duration, basis, basis_dimensions):
     """
-    Given coefficients for one flight, build each state
+    Given coefficients for one flight, build each variable
 
     Inputs:
         - c: list of floats or list of pd.Series
-            Each element of the list contains coefficients of a state
+            Each element of the list contains coefficients of a variable
         - duration: int
             Flight duration
         - basis: string
             Functionnal basis to project the flight on.
-        - var: dict
-            Give the number of basis functions for each state
+        - basis_dimensions: dict
+            Give the number of basis functions for each variable
 
     Output:
         - y: DataFrame
-            Contains computed states of a flight
+            Contains computed variables of a flight
     """
     # If c is list of floats, convert it into a list of pd.Series
     # Compute number of variables
-    n_var = len(var)
+    n_var = len(basis_dimensions)
     if len(c) != n_var:
         c_formatted = []
-        for state in var:
-            c_ = pd.Series(c[:var[state]], name=state)
-            del c[:var[state]]
+        for variable in basis_dimensions:
+            c_ = pd.Series(c[:basis_dimensions[variable]], name=variable)
+            del c[:basis_dimensions[variable]]
             c_formatted.append(c_)
         c = c_formatted.copy()
     # Length of the time interval
     T = duration
     y = pd.DataFrame()
-    # Build each state
+    # Build each variable
     for i in range(n_var):
         if basis == 'legendre':
             # Initiate Legendre class to fix the domain [0,1] of the basis
-            cl_c_state = legendre.Legendre(c[i].values, domain=[0, 1])
+            cl_c_variable = Legendre(c[i].values, domain=[0, 1])
             # Evaluate on T points
-            _, y[c[i].name] = legendre.Legendre.linspace(cl_c_state, n=T)
+            _, y[c[i].name] = Legendre.linspace(cl_c_variable, n=T)
 
     return y
 
 
-def integrate_bases_legendre(duration, var):
+def integrate_basis_legendre(basis_dimensions):
     """
-    Compute vector containing mean for each element of the n_var bases and
+    Compute a vector containing the mean of each element of the n_var bases and
     matrix containing dot products between each element of the n_var bases
     - Only for Legendre polynomials
 
     Inputs:
-        - duration: int
-            Flight duration
-        - var: dict
-            Give the number of basis functions for each state
+        - basis_dimensions: dict
+            Give the number of basis functions for each variable
 
-    outputs:
+    Outputs:
         - mean: numpy array [1, d]
             Array containing the means over an interval
         - dot_product: numpy array [d, d]
@@ -142,25 +138,25 @@ def integrate_bases_legendre(duration, var):
     # T = 1 because trajectory projected onto [0,1]
     T = 1
     # Compute the dimension of the problem
-    d = np.sum([var[elt] for elt in var])
+    d = np.sum([basis_dimensions[elt] for elt in basis_dimensions])
     # For Legendre polynomials, mean = 0 except when n=0
     mean = np.zeros(d)
     k = 0
-    for state in var:
+    for variable in basis_dimensions:
         mean[k] += T
-        k += var[state]
+        k += basis_dimensions[variable]
     # Compute dot product between the d polynomials
     # Here use <P_n, P_m> = T / (2*n + 1) * delta_mn
     dot_product = np.zeros([d, d])
     k, l = 0, 0
-    for state1 in var:
-        for state2 in var:
-            m = min([var[state1], var[state2]])
+    for variable1 in basis_dimensions:
+        for variable2 in basis_dimensions:
+            m = min([basis_dimensions[variable1], basis_dimensions[variable2]])
             for n in range(m):
                 # Squared L^2-norm of the n-th Legendre polynomial
                 dot_product[k + n, l + n] = T / (2*n + 1)
-            l += var[state2]
+            l += basis_dimensions[variable2]
         l = 0
-        k += var[state1]
+        k += basis_dimensions[variable1]
 
     return mean, dot_product

@@ -11,14 +11,14 @@ from scipy.optimize import LinearConstraint
 from numpy.polynomial import legendre
 
 
-def get_linear_endpoints(basis_dimension, vector_omega,
+def get_linear_endpoints(basis_dimensions, vector_omega,
                          ref_trajectories, endpoints_delta):
     """
     Return the linear endpoints that must be satified at the initial and final
     states.
 
     Inputs:
-        - basis_dimension: dict
+        - basis_dimensions: dict
             Defining the dimension for each variable. ex: {"var 1": 5, ...}
         - vector_omega: ndarray
             Weights to apply on the reference trajectories when computing the
@@ -29,7 +29,7 @@ def get_linear_endpoints(basis_dimension, vector_omega,
             Defining the maximum error at the initial and final states for each
             variable. ex: {"var 1": 10, ...}
     """
-    Phi = build_matrix_endpoints(basis_dimension)
+    Phi = build_matrix_endpoints(basis_dimensions)
     endpoints = {var: {'delta': endpoints_delta[var]}
                  for var in endpoints_delta}
     endpoints = compute_weighted_average_endpoints(endpoints,
@@ -39,12 +39,12 @@ def get_linear_endpoints(basis_dimension, vector_omega,
     return linear_endpoints
 
 
-def build_matrix_endpoints(basis_dimension):
+def build_matrix_endpoints(basis_dimensions):
     """
     Compute a matrix modelling the endpoints used for our optimization problem.
 
     Inputs:
-        - basis_dimension: dict
+        - basis_dimensions: dict
             Give the desired number of basis functions for each variable.
 
     Output:
@@ -55,10 +55,10 @@ def build_matrix_endpoints(basis_dimension):
     # polynomials
     rows_up = []  # Values at 0
     rows_low = []  # Values at T = 1 (because flights defined on [0,1])
-    for variable in basis_dimension:
+    for variable in basis_dimensions:
         row_0 = []
         row_T = []
-        for k in range(basis_dimension[variable]):
+        for k in range(basis_dimensions[variable]):
             # Create k-th Legendre polynomial on [0,1] and evaluate at
             # the endpoints
             basis_k = legendre.Legendre.basis(k, domain=[0, 1])
