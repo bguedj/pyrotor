@@ -66,7 +66,7 @@ def test_coef_to_trajectory():
 def test_integrate_bases_legendre():
     expected_mean = np.array([1., 0., 0., 1., 0.])
     expected_dot_product = np.array([[1., 0., 0., 1., 0.],
-                                     [0., 0.33333333 0., 0., 0.33333333],
+                                     [0., 0.33333333, 0., 0., 0.33333333],
                                      [0., 0., 0.2, 0., 0.],
                                      [1., 0., 0., 1., 0.],
                                      [0., 0.33333333, 0., 0., 0.33333333]])
