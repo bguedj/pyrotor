@@ -76,15 +76,16 @@ def trajectories_to_coefs(y, basis, basis_dimensions):
     return coefs
 
 
-def coef_to_trajectory(c, duration, basis, basis_dimensions):
+def coef_to_trajectory(c, time_range, basis, basis_dimensions):
     """
     Given coefficients for one flight, build each variable
 
     Inputs:
         - c: list of floats or list of pd.Series
             Each element of the list contains coefficients of a variable
-        - duration: int
-            Flight duration
+        - duration: dict
+            Information about the time domain (or independant variable).
+            ex: {"t0": 1, "t1": 99, "dt": 0.1}
         - basis: string
             Functionnal basis to project the flight on.
         - basis_dimensions: dict
@@ -94,6 +95,10 @@ def coef_to_trajectory(c, duration, basis, basis_dimensions):
         - y: DataFrame
             Contains computed variables of a flight
     """
+    t0 = time_range['t0']
+    t1 = time_range['t1']
+    dt = time_range['dt']
+    duration = (t1 - t0)//dt
     # If c is list of floats, convert it into a list of pd.Series
     # Compute number of variables
     n_var = len(basis_dimensions)
@@ -105,16 +110,15 @@ def coef_to_trajectory(c, duration, basis, basis_dimensions):
             c_formatted.append(c_)
         c = c_formatted.copy()
     # Length of the time interval
-    T = duration
     y = pd.DataFrame()
     # Build each variable
     for i in range(n_var):
         if basis == 'legendre':
             # Initiate Legendre class to fix the domain [0,1] of the basis
-            cl_c_variable = Legendre(c[i].values, domain=[0, 1])
-            # Evaluate on T points
-            _, y[c[i].name] = Legendre.linspace(cl_c_variable, n=T)
-
+            # FIXME: domain=[t0, t1]
+            cl_c_variable = Legendre(c[i].values, domain=[t0, t1])
+            # Evaluation on duration points
+            _, y[c[i].name] = Legendre.linspace(cl_c_variable, n=duration)
     return y
 
 

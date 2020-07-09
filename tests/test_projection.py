@@ -48,9 +48,9 @@ def test_trajectories_to_coefs():
 
 
 def test_coef_to_trajectory():
+    time_range = {"t0": 1, "t1": 6, "dt": 1}
     coefs = [pd.Series([3.5, 2.5, 0], name="A", dtype='float64'),
              pd.Series([9, 15], name="B", dtype='float64')]
-    duration = 5
     basis_dimensions = {"A": 3, "B": 2}
     basis = "legendre"
 
@@ -58,7 +58,7 @@ def test_coef_to_trajectory():
                                         "B": [-6, 1.5, 9.0, 16.5, 24]},
                                        dtype='float64')
 
-    result = coef_to_trajectory(coefs, duration, basis, basis_dimensions)
+    result = coef_to_trajectory(coefs, time_range, basis, basis_dimensions)
 
     pd.testing.assert_frame_equal(expected_trajectory, result)
 
