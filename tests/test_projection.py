@@ -11,19 +11,19 @@ from numpy.polynomial import legendre
 
 from pyrotor.projection import trajectory_to_coef
 from pyrotor.projection import trajectories_to_coefs
+from pyrotor.projection import compute_weighted_coef
 from pyrotor.projection import coef_to_trajectory
-from pyrotor.projection import integrate_basis_legendre
 
 
 def test_trajectory_to_coef():
     y = pd.DataFrame({"A": [1, 2, 3, 4, 5],
                       "B": [-4, -1, 4, 11, 20]})
-    basis_dimensions = {"A": 3, "B": 2}
+    basis_dimension = {"A": 3, "B": 2}
     basis = "legendre"
     expected_coef_A = pd.Series([3.5, 2.5, 0], name="A", dtype='float64')
     expected_coef_B = pd.Series([9, 15], name="B", dtype='float64')
 
-    result = trajectory_to_coef(y, basis, basis_dimensions)
+    result = trajectory_to_coef(y, basis, basis_dimension)
     result_A = result[0]
     result_B = result[1]
 
@@ -34,12 +34,12 @@ def test_trajectory_to_coef():
 def test_trajectories_to_coefs():
     y = [pd.DataFrame({"A": [1, 2, 3, 4, 5]}),
          pd.DataFrame({"A": [-4, -1, 4, 11, 20]})]
-    basis_dimensions = {"A": 2}
+    basis_dimension = {"A": 2}
     basis = "legendre"
     expected_coefs_traj_1 = np.array([3.5, 2.5])
     expected_coefs_traj_2 = np.array([9, 15])
 
-    result = trajectories_to_coefs(y, basis, basis_dimensions)
+    result = trajectories_to_coefs(y, basis, basis_dimension)
     result_1 = result[0]
     result_2 = result[1]
 
@@ -47,31 +47,30 @@ def test_trajectories_to_coefs():
     np.testing.assert_almost_equal(result_2, expected_coefs_traj_2)
 
 
+def test_compute_weighted_coef():
+    coef1 = pd.Series([1, 2, 0], dtype='float64')
+    coef2 = pd.Series([-2, 0, 1], dtype='float64')
+    coefs = [coef1, coef2]
+    weights = np.array([-1/3, 2/3])
+    basis_dimension = {"A": 1, "B": 2}
+    c_weight = compute_weighted_coef(coefs, weights, basis_dimension)
+
+    expected_c_weight = np.array([-5/3, -2/3, 2/3])
+
+    np.testing.assert_almost_equal(c_weight, expected_c_weight)  
+
+
 def test_coef_to_trajectory():
-    time_range = {"t0": 1, "t1": 6, "dt": 1}
     coefs = [pd.Series([3.5, 2.5, 0], name="A", dtype='float64'),
              pd.Series([9, 15], name="B", dtype='float64')]
-    basis_dimensions = {"A": 3, "B": 2}
+    duration = 5
+    basis_dimension = {"A": 3, "B": 2}
     basis = "legendre"
 
     expected_trajectory = pd.DataFrame({"A": [1, 2.25, 3.5, 4.75, 6],
                                         "B": [-6, 1.5, 9.0, 16.5, 24]},
                                        dtype='float64')
 
-    result = coef_to_trajectory(coefs, time_range, basis, basis_dimensions)
+    result = coef_to_trajectory(coefs, duration, basis, basis_dimension)
 
     pd.testing.assert_frame_equal(expected_trajectory, result)
-
-
-def test_integrate_bases_legendre():
-    expected_mean = np.array([1., 0., 0., 1., 0.])
-    expected_dot_product = np.array([[1., 0., 0., 1., 0.],
-                                     [0., 0.33333333, 0., 0., 0.33333333],
-                                     [0., 0., 0.2, 0., 0.],
-                                     [1., 0., 0., 1., 0.],
-                                     [0., 0.33333333, 0., 0., 0.33333333]])
-    basis_dimensions = {"A": 3, "B": 2}
-    mean, dot_product = integrate_basis_legendre(basis_dimensions)
-
-    np.testing.assert_almost_equal(mean, expected_mean)
-    np.testing.assert_almost_equal(dot_product, expected_dot_product)

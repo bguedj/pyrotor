@@ -8,9 +8,18 @@ Class for trajectory optimization
 import numpy as np
 import pandas as pd
 
-from .projection import trajectories_to_coefs, coef_to_trajectory
+from .projection import trajectories_to_coefs
+from .projection import coef_to_trajectory
+from .projection import compute_weighted_coef
+
 from .initial_and_final_states import get_linear_endpoints
+
 from .constraints import is_in_constraints
+
+from .objective_matrices import compute_objective_matrices
+
+from .data_analysis import compute_sigma_inverse
+from .data_analysis import compute_intersection_kernels
 
 
 class Pyrotor():
@@ -33,7 +42,7 @@ class Pyrotor():
         """
         pass
 
-    def initialize_ref_climbs(self):
+    def initialize_ref_coefficients(self):
         self.ref_coefficients = compute_ref_coefficients(self.ref_trajectories,
                                                          self.basis,
                                                          self.var_dim)
@@ -42,7 +51,7 @@ class Pyrotor():
         """
         Compute a trajectory in accordance with aeronautical standards
         """
-        self.vector_omega = compute_vector_omega(self.ref_TFC)
+        self.weights = compute_vector_omega(self.ref_TFC)
         self.ref_coefficients = compute_ref_coefficients(self.ref_trajectories,
                                                          self.longest_ref_climb_duration,
                                                          self.I,
@@ -55,19 +64,28 @@ class Pyrotor():
         """
         Compute the optimized trajectory
         """
-        # Init objects for optimization
-        W, Q, D2 = compute_matrices_cost_function(self.longest_ref_climb_duration,
-                                                        self.var_dim,
-                                                        self.model_path,
-                                                        self.basis)
-        lambd = weight_components(self.var_dim, self.weight_dict)
-        ref_coefficients = compute_weighted_coefficient(self.var_dim, self.ref_coefficients, self.vector_omega)
+        # Compute matrices involved on the final cost function
+        W, Q = compute_objective_matrices(self.basis,
+                                          self.basis_dimension,
+                                          self.model_path)
+        # Compute the pseudo-inverse of variance-covariance matrix
+        sigma_inverse = compute_sigma_inverse(self.ref_coefficients)
+        # Compute intersection between ker phi.T*phi and ker sigma
+        v_kernel = compute_intersection_kernels()
         # Init endpoints constraints
         get_linear_constraints()
+        add_linear_constraints(v_kernel, self.ref_coefficients)
         # ou multiplier vector_omega par kappa
-        c_opt = compute_optimized_coefficients(Q, W, Phi, linear_constraints, lambd, D2,
-                                           ref_coefficients, self.vector_omega,
-                                           self.quadratic_programming)
+        # Compute the weighted coefficients
+        c_weight = compute_weighted_coef(self.ref_coefficients,
+                                         self.weights,
+                                         self.basis_dimension)
+        c_opt = compute_optimized_coefficients(Q,
+                                               W,
+                                               phi,
+                                               lin_const,
+                                               sigma_inverse,
+                                               c_weight)
         # Construction optimized flight from coefficients
         self.y_opt = coef_to_traj(c_opt, self.longest_ref_climb_duration, self.basis, self.basis_dimension)
         self.optimized_cost = compute_cost(self.y_opt)

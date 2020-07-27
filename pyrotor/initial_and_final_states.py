@@ -6,9 +6,12 @@ Modelisation of optimization endpoints
 """
 
 import numpy as np
+from numpy.polynomial import legendre
 from scipy.linalg import block_diag
 from scipy.optimize import LinearConstraint
-from numpy.polynomial import legendre
+
+
+# TODO: add conditions from 'natural' correlations (V_2 matrix)
 
 
 def get_linear_endpoints(basis_dimensions, vector_omega,
@@ -29,13 +32,13 @@ def get_linear_endpoints(basis_dimensions, vector_omega,
             Defining the maximum error at the initial and final states for each
             variable. ex: {"var 1": 10, ...}
     """
-    Phi = build_matrix_endpoints(basis_dimensions)
+    phi = build_matrix_endpoints(basis_dimensions)
     endpoints = {var: {'delta': endpoints_delta[var]}
                  for var in endpoints_delta}
     endpoints = compute_weighted_average_endpoints(endpoints,
                                                    vector_omega,
                                                    ref_trajectories)
-    linear_endpoints = format_endpoints(Phi, endpoints)
+    linear_endpoints = format_endpoints(phi, endpoints)
     return linear_endpoints
 
 
@@ -96,6 +99,8 @@ def compute_weighted_average_endpoints(endpoints, omega, ref_trajectories):
         - endpoints: dict
             Initial and final states that the optimized trajectory must follow.
             ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
+
+    # FIXME: to remove ???
     """
     for variable in ref_trajectories[0].columns:
         endpoints[variable]['start'] = np.average(
