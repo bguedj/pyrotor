@@ -4,7 +4,7 @@
 """
 Test the optimization module
 """
-import unittest
+import pytest
 
 import numpy as np
 
@@ -26,7 +26,7 @@ def test_minimize_cvx():
     K = np.sum([basis_dimension[elt] for elt in basis_dimension])
     # Create a random vector
     c_weight = np.random.rand(K)
-    # Create a random matrix 
+    # Create a random matrix
     sigma_inverse = np.random.rand(K, K)
     # Write Q = Id - sigma_inverse so that P = 2/ 2 * (Q + sigma_inverse) = Id
     Q = np.eye(K) - sigma_inverse
@@ -35,16 +35,18 @@ def test_minimize_cvx():
     W = -2 * np.ones(K) + 2 * np.dot(c_weight, sigma_inverse)
     # Create phi
     phi = np.zeros([2, K])
-    phi[0,:2] += 1
-    phi[1,-1] += -1
-    phi[1,-2] += 1
+    phi[0, :2] += 1
+    phi[1, -1] += -1
+    phi[1, -2] += 1
     # Create b for linear conditions phi * c = b
     left_hs = [1.9, -.1]
     right_hs = [2.1, .1]
     # Create LinearConstraint object
     lin_const = LinearConstraint(phi, left_hs, right_hs)
     # Apply minimize_cvx()
-    c_optimized = minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight)
+    kappa = 1
+    c_optimized = minimize_cvx(Q, W, phi, lin_const, sigma_inverse,
+                               c_weight, kappa)
 
     expected_c_optimized = np.ones(K)
 

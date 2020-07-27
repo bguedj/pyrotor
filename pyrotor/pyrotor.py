@@ -24,7 +24,7 @@ from .data_analysis import compute_intersection_kernels
 
 class Pyrotor():
     """
-    Opti class contains all the routines to optimize a flight
+    Optimize your trajectory with Pyrotor.
     """
 
     def __init__(self,
@@ -51,7 +51,7 @@ class Pyrotor():
         """
         Compute a trajectory in accordance with aeronautical standards
         """
-        self.weights = compute_vector_omega(self.ref_TFC)
+        self.omega = compute_vector_omega(self.ref_TFC)
         self.ref_coefficients = compute_ref_coefficients(self.ref_trajectories,
                                                          self.longest_ref_climb_duration,
                                                          self.I,
@@ -86,6 +86,6 @@ class Pyrotor():
                                                lin_const,
                                                sigma_inverse,
                                                c_weight)
-        # Construction optimized flight from coefficients
+        # Construction optimized trajectory from coefficients
         self.y_opt = coef_to_traj(c_opt, self.longest_ref_climb_duration, self.basis, self.basis_dimension)
         self.optimized_cost = compute_cost(self.y_opt)

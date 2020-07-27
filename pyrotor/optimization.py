@@ -24,7 +24,7 @@ def compute_optimized_coefficients(Q, W, phi, lin_const, sigma_inverse,
     return c_opt
 
 
-def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight):
+def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
     """
     Minimize a quadratic function using CVXOPT library - The associated
     matrix must be positive semidefinite
@@ -49,9 +49,9 @@ def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight):
             Coefficients of the optimized trajectory
     """
     # Define quadratic part
-    P = matrix(2 * (Q + sigma_inverse))
+    P = matrix(2 * (kappa * Q + sigma_inverse))
     # Define linear part
-    q = matrix((W - 2 * np.dot(c_weight, sigma_inverse)).T)
+    q = matrix((kappa * W - 2 * np.dot(c_weight, sigma_inverse)).T)
     # Define upper and lower endpoints matrix
     # NB: CVXOPT does not deal with two-sided conditions so modify
     # matrix and lower-upper_bounds

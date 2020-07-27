@@ -86,7 +86,7 @@ def compute_weighted_coef(coefs, weights, basis_dimension):
             Vector containing the weights
         - basis_dimension: dict
             Give the number of basis functions for each variable
-        
+
     Output:
         c_weight: ndarray
             Vector containing weighted sum of the coefficients
@@ -99,7 +99,7 @@ def compute_weighted_coef(coefs, weights, basis_dimension):
         c_weight += coef_i * weights[i]
 
     return np.array(c_weight)
-    
+
 
 def coef_to_trajectory(c, evaluation_points_nb, basis, basis_dimension):
     """
@@ -119,7 +119,7 @@ def coef_to_trajectory(c, evaluation_points_nb, basis, basis_dimension):
     Output:
         - y: DataFrame
             Contains computed variables of a flight
-    
+
     # FIXME: if below necessary ??
     """
     # If c is list of floats, convert it into a list of pd.Series

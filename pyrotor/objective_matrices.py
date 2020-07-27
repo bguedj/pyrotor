@@ -9,7 +9,7 @@ import pickle
 
 import numpy as np
 
-from .basis import basis_legendre
+from .basis import compute_legendre_features
 
 
 def model_to_matrix(path, basis_dimension):
@@ -128,7 +128,7 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
             if str then it is the path to the folder containing the pickle
             model; else the first element of the list is w and the second one
             is q
-    
+
     Outputs:
         - W: ndarray
             Vector involved in the linear part of the cost function
@@ -136,8 +136,8 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
             Matrix involved in the quadratic part of the cost function
     """
     # Compute means and dot products depending on the basis
-    if basis is 'legendre':
-        mean, dot_product = basis_legendre(basis_dimension)
+    if basis == 'legendre':
+        mean, dot_product = compute_legendre_features(basis_dimension)
     # If pickle model, compute w, q using model_to_matrix()
     if isinstance(quad_model, str):
         # Compute w, q associated with the quadratic model

@@ -8,7 +8,7 @@ Compute means and dot products of a given functional basis
 import numpy as np
 
 
-def basis_legendre(basis_dimension):
+def compute_legendre_features(basis_dimension):
     """
     Compute means and dot products of the Legendre polynomial basis - Return
     vector and matrix in the format adapted to the optimization problem
