@@ -27,7 +27,7 @@ def is_in_constraints(trajectory, constraints):
              Wether or not it is in constraints
     """
     for constraint in constraints:
-        y = constraint(trajectory.values)
+        y = constraint(trajectory)
         if (y < 0).any():
             return False
     return True
