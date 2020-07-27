@@ -18,7 +18,7 @@ from .constraints import is_in_constraints
 
 from .objective_matrices import compute_objective_matrices
 
-from .data_analysis import compute_sigma_inverse
+from .data_analysis import compute_covariance
 from .data_analysis import compute_intersection_kernels
 
 
@@ -69,7 +69,7 @@ class Pyrotor():
                                           self.basis_dimension,
                                           self.model_path)
         # Compute the pseudo-inverse of variance-covariance matrix
-        sigma_inverse = compute_sigma_inverse(self.ref_coefficients)
+        sigma_inverse = compute_covariance(self.ref_coefficients)
         # Compute intersection between ker phi.T*phi and ker sigma
         v_kernel = compute_intersection_kernels()
         # Init endpoints constraints
