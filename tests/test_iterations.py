@@ -4,6 +4,8 @@
 """
 Test the iterations module
 """
+
+import unittest
 import pytest
 import mock
 import numpy as np
@@ -15,6 +17,7 @@ from pyrotor.iterations import compute_kappa_mean
 from pyrotor.iterations import compute_f
 from pyrotor.iterations import compute_g
 from pyrotor.iterations import binary_search_best_trajectory
+from pyrotor.iterations import compute_trajectory_kappa
 
 
 def test_get_kappa_boundaries():
@@ -72,43 +75,42 @@ def test_compute_g():
     assert g_0 == expected_g_0
 
 
-optimization = None
-i_call = 0
+class TestTrajectoryIterations(unittest.TestCase):
 
+    def setUp(self):
+        self.trajectory = mock.Mock()
+        self.i_call = 0
 
-def fake_compute_trajectory():
-    global i_call
-    global optimization
-    i_call += 1
-    if i_call == 2:
-        optimization.is_valid = True
+    def fake_compute_trajectory(self):
+        self.i_call += 1
+        if self.i_call == 2:
+            self.trajectory.is_valid = True
 
+    def test_binary_search_best_trajectory(self):
 
-def test_binary_search_best_trajectory():
-    global i_call
-    global optimization
+        self.trajectory.i_binary_search = 0
+        # case 1: i < 0 -> ValueError as we can't find a solution to this
+        # optimization
+        with pytest.raises(ValueError):
+            binary_search_best_trajectory(self.trajectory, -1, 5)
 
-    optimization = mock.Mock()
-    optimization.i_binary_search = 0
-    # case 1: i < 0 -> ValueError as we can't find a solution to this
-    # optimization
-    with pytest.raises(ValueError):
-        binary_search_best_trajectory(optimization, -1, 5)
+        # case 2:
+        self.trajectory.is_valid = True
+        self.trajectory.original_weights = [0, 1, 2]
+        self.trajectory.kappas = [1, 2, 3]
+        self.i_call = 0
 
-    # case 2:
-    optimization.is_valid = True
-    optimization.original_weights = [0, 1, 2]
-    optimization.kappas = [1, 2, 3]
-    i_call = 0
+        self.trajectory.compute_trajectory = self.fake_compute_trajectory
+        binary_search_best_trajectory(self.trajectory, 2, 0)
+        assert self.i_call == 1
 
-    optimization.compute_trajectory = fake_compute_trajectory
-    binary_search_best_trajectory(optimization, 2, 0)
-    assert i_call == 1
+        # FIXME: to test when required dependencies tested
+        # # case 3:
+        # i_call = 0
+        # trajectory.is_valid = False
+        # trajectory.compute_trajectory = self.fake_compute_trajectory
+        # binary_search_best_trajectory(optimization, 2, 0)
+        # assert i_call > 1
 
-    # FIXME: to test when required dependencies tested
-    # # case 3:
-    # i_call = 0
-    # optimization.is_valid = False
-    # optimization.compute_trajectory = fake_compute_trajectory
-    # binary_search_best_trajectory(optimization, 2, 0)
-    # assert i_call > 1
+    def test_compute_trajectory_kappa(self):
+        pass

@@ -7,6 +7,7 @@ Describe the iterative process performed while optimizing trajectories.
 
 
 def get_kappa_boundaries(x, Q, W, sigma_inverse, c_weight):
+    # FIXME: loop through many ref trajectories
     f_0 = compute_f(x, sigma_inverse, c_weight)
     g_0 = compute_g(x, Q, W)
 
@@ -41,31 +42,30 @@ def compute_g(x, Q, W):
     return a + b
 
 
+def compute_trajectory_kappa(trajectory, kappa_min, kappa_max):
+    trajectory.kappas = np.linspace(kappa_min, kappa_max, 1000)
+    trajectory.i_binary_search = 0
+    binary_search_best_trajectory(trajectory,
+                                  len(trajectory.kappas)-1,
+                                  len(trajectory.kappas)-1)
+    if not self.is_valid:
+        raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
+
+
 def binary_search_best_trajectory(trajectory, i, step):
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1
     if i < 0:
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
-    trajectory.weight_dict = {k: trajectory.kappas[i] * trajectory.original_weights[k]
-                              for k in trajectory.original_weights}
+
+    trajectory.kappa = trajectory.kappas[i]
     trajectory.compute_trajectory()
 
     step = step//2
     if not trajectory.is_valid:
         if step == 0:
             step = 1
-        trajectory.binary_search_best_opti(i-step, step)
+        binary_search_best_trajectory(trajectory, i-step, step)
     else:
         if len(trajectory.kappas)-1 != i and step != 0:
-            trajectory.binary_search_best_opti(i+step, step)
-
-
-def compute_trajectory_kappa(trajectory):
-    from copy import copy
-    trajectory.original_weights = copy(trajectory.weight_dict)
-    x = np.linspace(0, 1, 30)
-    trajectory.kappas = 1/np.exp(5*x**(1/2))
-    trajectory.i_binary_search = 0
-    trajectory.binary_search_best_opti(len(trajectory.kappas)-1, len(trajectory.kappas)-1)
-    if not self.is_valid:
-        raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
+            binary_search_best_trajectory(trajectory, i+step, step)

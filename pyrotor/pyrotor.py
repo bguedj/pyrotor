@@ -80,6 +80,7 @@ class Pyrotor():
         c_weight = compute_weighted_coef(self.ref_coefficients,
                                          self.weights,
                                          self.basis_dimension)
+        # début boucle
         c_opt = compute_optimized_coefficients(Q,
                                                W,
                                                phi,
@@ -88,4 +89,6 @@ class Pyrotor():
                                                c_weight)
         # Construction optimized trajectory from coefficients
         self.y_opt = coef_to_traj(c_opt, self.longest_ref_climb_duration, self.basis, self.basis_dimension)
+        verification_des_constraintes()
+        # fin boucle
         self.optimized_cost = compute_cost(self.y_opt)
