@@ -42,7 +42,7 @@ def compute_g(x, Q, W):
     return a + b
 
 
-def compute_trajectory_kappa(trajectory, kappa_min, kappa_max):
+def iterate_through_kappas(trajectory, kappa_min, kappa_max):
     trajectory.kappas = np.linspace(kappa_min, kappa_max, 1000)
     trajectory.i_binary_search = 0
     binary_search_best_trajectory(trajectory,

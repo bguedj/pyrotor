@@ -17,7 +17,7 @@ from pyrotor.iterations import compute_kappa_mean
 from pyrotor.iterations import compute_f
 from pyrotor.iterations import compute_g
 from pyrotor.iterations import binary_search_best_trajectory
-from pyrotor.iterations import compute_trajectory_kappa
+from pyrotor.iterations import iterate_through_kappas
 
 
 def test_get_kappa_boundaries():
@@ -112,5 +112,5 @@ class TestTrajectoryIterations(unittest.TestCase):
         # binary_search_best_trajectory(optimization, 2, 0)
         # assert i_call > 1
 
-    def test_compute_trajectory_kappa(self):
+    def test_iterate_through_kappas(self):
         pass

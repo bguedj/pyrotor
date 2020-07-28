@@ -51,19 +51,21 @@ class Pyrotor():
         """
         Compute a trajectory in accordance with aeronautical standards
         """
-        self.omega = compute_vector_omega(self.ref_TFC)
-        self.ref_coefficients = compute_ref_coefficients(self.ref_trajectories,
-                                                         self.longest_ref_climb_duration,
-                                                         self.I,
-                                                         self.basis,
-                                                         self.var_dim)
-        self.compute_optimal_trajectory()
+        c_opt = compute_optimized_coefficients(Q,
+                                               W,
+                                               phi,
+                                               lin_const,
+                                               sigma_inverse,
+                                               c_weight)
+        # Construction optimized trajectory from coefficients
+        self.y_opt = coef_to_traj(c_opt, self.longest_ref_climb_duration, self.basis, self.basis_dimension)
         self.is_valid = is_in_constraints(self.y, self.u['VARIO'].values, self.mass, self.protection, self.vmo_mmo)
 
     def compute_optimal_trajectory(self):
         """
         Compute the optimized trajectory
         """
+        self.omega = compute_vector_omega(self.ref_TFC)
         # Compute matrices involved on the final cost function
         W, Q = compute_objective_matrices(self.basis,
                                           self.basis_dimension,
@@ -80,15 +82,7 @@ class Pyrotor():
         c_weight = compute_weighted_coef(self.ref_coefficients,
                                          self.weights,
                                          self.basis_dimension)
-        # début boucle
-        c_opt = compute_optimized_coefficients(Q,
-                                               W,
-                                               phi,
-                                               lin_const,
-                                               sigma_inverse,
-                                               c_weight)
-        # Construction optimized trajectory from coefficients
-        self.y_opt = coef_to_traj(c_opt, self.longest_ref_climb_duration, self.basis, self.basis_dimension)
-        verification_des_constraintes()
-        # fin boucle
+        kappa_min, kappa_max = get_kappa_boundaries(x, Q, W,
+                                                    sigma_inverse, c_weight)
+        iterate_through_kappas(self, kappa_min, kappa_max)
         self.optimized_cost = compute_cost(self.y_opt)
