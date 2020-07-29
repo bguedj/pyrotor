@@ -29,7 +29,7 @@ def compute_covariance(X):
     Input:
         X: ndarray
             Data
-    
+
     Outputs:
         covariance: ndarray
             Estimated covariance matrix
@@ -46,7 +46,7 @@ def compute_covariance(X):
     return covariance, precision
 
 
-def compute_cost(trajectories, quad_model, basis_dimension=None):
+def compute_trajectories_cost(trajectories, quad_model, basis_dimension=None):
     """
     Compute the cost for each trajectory of a list
 
@@ -84,7 +84,7 @@ def compute_cost(trajectories, quad_model, basis_dimension=None):
         trajectory_pointwise_cost = quadratic_term + linear_term
         # Compute total cost by addition
         trajectories_cost.append(np.sum(trajectory_pointwise_cost))
-    
+
     return np.array(trajectories_cost)
 
 
@@ -100,7 +100,7 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
             Array containing the cost of the trajectories
         - trajectories_nb: int
             Number of trajectories to keep
-    
+
     Ouputs:
         - best_trajectories: list of pd.DataFrame
             List containing the best trajectories
