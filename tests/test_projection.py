@@ -20,8 +20,8 @@ def test_trajectory_to_coef():
                       "B": [-4, -1, 4, 11, 20]})
     basis_dimension = {"A": 3, "B": 2}
     basis = "legendre"
-    expected_coef_A = pd.Series([3.5, 2.5, 0], name="A", dtype='float64')
-    expected_coef_B = pd.Series([9, 15], name="B", dtype='float64')
+    expected_coef_A = pd.Series([3., 2., 0.], name="A", dtype='float64')
+    expected_coef_B = pd.Series([6., 12.], name="B", dtype='float64')
 
     result = trajectory_to_coef(y, basis, basis_dimension)
     result_A = result[0]
@@ -36,8 +36,8 @@ def test_trajectories_to_coefs():
          pd.DataFrame({"A": [-4, -1, 4, 11, 20]})]
     basis_dimension = {"A": 2}
     basis = "legendre"
-    expected_coefs_traj_1 = np.array([3.5, 2.5])
-    expected_coefs_traj_2 = np.array([9, 15])
+    expected_coefs_traj_1 = np.array([3., 2.])
+    expected_coefs_traj_2 = np.array([6., 12.])
 
     result = trajectories_to_coefs(y, basis, basis_dimension)
     result_1 = result[0]
