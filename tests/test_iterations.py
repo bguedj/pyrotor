@@ -21,7 +21,7 @@ from pyrotor.iterations import iterate_through_kappas
 
 
 def test_get_kappa_boundaries():
-    x = np.array([1, 2])
+    x = np.array([[1, 2], [1, 2]])
     Q = np.array([[1, 2], [3, 4]])
     W = np.array([2, 3])
     sigma_inverse = np.array([[1, 2], [3, 4]])

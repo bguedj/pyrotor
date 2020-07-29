@@ -6,12 +6,37 @@ Describe the iterative process performed while optimizing trajectories.
 """
 
 
-def get_kappa_boundaries(x, Q, W, sigma_inverse, c_weight):
-    # FIXME: loop through many ref trajectories
-    f_0 = compute_f(x, sigma_inverse, c_weight)
-    g_0 = compute_g(x, Q, W)
+def get_kappa_boundaries(reference_coefficients, q, w, sigma_inverse, c_weight):
+    """
+    Give the possible minumum and maximum supposed value of kappa.
 
-    kappa_mean = compute_kappa_mean(f_0, g_0)
+    Inputs:
+        - reference_coefficients: ndarray
+            Coefficients of reference
+        - q: ndarray
+            Matrix of the quadratic term
+        - w: ndarray
+            Vector of the linear term (without intercept)
+        - sigma_inverse: ndarray
+            Pseudoinverse of the covariance matrix of the reference
+            coefficients
+        - c_weight: ndarray
+            Coefficients of a weighted trajectory
+
+    Outputs:
+        - kappa_min: float
+            Supposed possible minimum value of kappa
+        - kappa_max: float
+            Supposed possible maximum value of kappa
+
+    """
+    f = []
+    g = []
+    for reference_coefficient in reference_coefficients:
+        f.append(compute_f(reference_coefficient, sigma_inverse, c_weight))
+        g.append(compute_g(reference_coefficient, q, w))
+    kappa_mean = compute_kappa_mean(f, g)
+
     kappa_min = compute_kappa_min(kappa_mean)
     kappa_max = compute_kappa_max(kappa_mean)
 
@@ -26,8 +51,11 @@ def compute_kappa_max(kappa_mean):
     return kappa_mean * 1000
 
 
-def compute_kappa_mean(f_0, g_0):
-    return f_0/g_0
+def compute_kappa_mean(f, g):
+    f = np.array(f)
+    g = np.array(g)
+    kappa = f/g
+    return np.mean(kappa)
 
 
 def compute_f(x, sigma_inverse, c_weight):
