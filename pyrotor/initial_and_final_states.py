@@ -14,8 +14,7 @@ from scipy.optimize import LinearConstraint
 # TODO: add conditions from 'natural' correlations (V_2 matrix)
 
 
-def get_linear_endpoints(basis_dimensions, vector_omega,
-                         ref_trajectories, endpoints_delta):
+def get_linear_endpoints(basis_dimensions, endpoints):
     """
     Return the linear endpoints that must be satified at the initial and final
     states.
@@ -33,11 +32,6 @@ def get_linear_endpoints(basis_dimensions, vector_omega,
             variable. ex: {"var 1": 10, ...}
     """
     phi = build_matrix_endpoints(basis_dimensions)
-    endpoints = {var: {'delta': endpoints_delta[var]}
-                 for var in endpoints_delta}
-    endpoints = compute_weighted_average_endpoints(endpoints,
-                                                   vector_omega,
-                                                   ref_trajectories)
     linear_endpoints = format_endpoints(phi, endpoints)
     return linear_endpoints
 
@@ -81,37 +75,6 @@ def build_matrix_endpoints(basis_dimensions):
     return phi
 
 
-def compute_weighted_average_endpoints(endpoints, omega, ref_trajectories):
-    """
-    For each variable, it computes the weighted average of the ref trajectories
-    initial and final states.
-
-    Inputs:
-        - endpoints: dict
-            Contain endpoints error margins for all the variables
-            ex: {"var 1": {"delta": 10}}
-        - omega: ndarray
-            Vector containing the weight for each reference flight
-        - ref_trajectories: list
-            List of DataFrame, each DataFrame describing a reference flight
-
-    Ouput:
-        - endpoints: dict
-            Initial and final states that the optimized trajectory must follow.
-            ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
-
-    # FIXME: to remove ???
-    """
-    for variable in ref_trajectories[0].columns:
-        endpoints[variable]['start'] = np.average(
-            [y_ref_i[variable].values[0] for y_ref_i in ref_trajectories],
-            weights=omega)
-        endpoints[variable]['end'] = np.average(
-            [y_ref_i[variable].values[-1] for y_ref_i in ref_trajectories],
-            weights=omega)
-    return endpoints
-
-
 def format_endpoints(phi, endpoints):
     """
     Build a Scipy object modelling endpoints and used for optimization
@@ -126,7 +89,6 @@ def format_endpoints(phi, endpoints):
         - linear_endpoints: LinearConstraint object
             Scipy object describing the linear endpoints
     """
-
     # Define lower endpoints at 0
     left_endpoints_0 = [endpoints[variable]['start']
                         - endpoints[variable]['delta']
