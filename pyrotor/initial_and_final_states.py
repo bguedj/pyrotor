@@ -27,9 +27,9 @@ def get_linear_endpoints(basis_dimensions, endpoints):
             endpoints.
         - ref_trajectories: list of Pandas DataFrame
             Trajectories of reference.
-        - endpoints_delta: dict
-            Defining the maximum error at the initial and final states for each
-            variable. ex: {"var 1": 10, ...}
+        - endpoints: dict
+            Initial and final states that the optimized trajectory must follow.
+            ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
     """
     phi = build_matrix_endpoints(basis_dimensions)
     linear_endpoints = format_endpoints(phi, endpoints)

@@ -40,9 +40,6 @@ def test_format_endpoints():
 
 def test_get_linear_endpoints():
     basis_dimensions = {"A": 3, "B": 2}
-    # omega = np.array([1, 2])
-    # ref_trajectories = [pd.DataFrame({'A': [1, 4], 'B': [1, 1]}),
-    #                     pd.DataFrame({'A': [1, 1], 'B': [7, 10]})]
     phi = np.array([[1., -1.,  1.,  0.,  0.],
                     [0.,  0.,  0.,  1., -1.],
                     [1.,  1.,  1.,  0.,  0.],
