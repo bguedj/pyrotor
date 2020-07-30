@@ -43,7 +43,8 @@ def compute_covariance(X):
     covariance = cov.covariance_
     precision = cov.precision_
 
-    return covariance, np.diag(np.diag(precision))
+    # return covariance, np.diag(np.diag(precision))
+    return covariance, precision
 
 
 def compute_trajectories_cost(trajectories, quad_model, basis_dimension=None):

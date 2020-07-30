@@ -73,7 +73,11 @@ class Pyrotor():
         # Init endpoints constraints
         self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
                                                                  self.endpoints)
-        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 5)
+        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 7)
+        self.initialize_ref_coefficients()
+        self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
+                                                         self.quadratic_model)
+
         self.weights = compute_weights(self.reference_costs)
         self.c_weight = compute_weighted_coef(self.ref_coefficients,
                                          self.weights,
@@ -91,19 +95,22 @@ class Pyrotor():
         """
         Compute a trajectory in accordance with aeronautical standards
         """
-        c_opt = compute_optimized_coefficients(self.Q,
-                                               self.W,
-                                               self.phi,
-                                               self.linear_constraints,
-                                               self.sigma_inverse,
-                                               self.c_weight,
-                                               self.kappa)
-        # Construction optimized trajectory from coefficients
-        self.trajectory = coef_to_trajectory(c_opt,
-                                             self.independent_variable["points_nb"],
-                                             self.basis,
-                                             self.basis_dimension)
-        self.is_valid = is_in_constraints(self.trajectory, self.constraints)
+        try:
+            c_opt = compute_optimized_coefficients(self.Q,
+                                                   self.W,
+                                                   self.phi,
+                                                   self.linear_constraints,
+                                                   self.sigma_inverse,
+                                                   self.c_weight,
+                                                   self.kappa)
+            # Construction optimized trajectory from coefficients
+            self.trajectory = coef_to_trajectory(c_opt,
+                                                 self.independent_variable["points_nb"],
+                                                 self.basis,
+                                                 self.basis_dimension)
+            self.is_valid = is_in_constraints(self.trajectory, self.constraints)
+        except ValueError:
+            self.is_valid = False
 
     def compute_optimal_trajectory(self):
         """
