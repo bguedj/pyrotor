@@ -11,7 +11,6 @@ import pandas as pd
 
 from pyrotor.data_analysis import nb_samples_is_sufficient
 from pyrotor.data_analysis import compute_covariance
-from pyrotor.data_analysis import compute_cost
 from pyrotor.data_analysis import select_trajectories
 from pyrotor.data_analysis import compute_weights
 
@@ -41,7 +40,7 @@ def test_compute_covariance():
           [1,2,3]]
     covariance1, precision1 = compute_covariance(X1)
     covariance2, precision2 = compute_covariance(X2)
-    
+
     expected_covariance1 = np.array([[965.01333333, -125.01851852, 839.99481481],
                                      [-125.01851852, 21.13580247, -103.88271605],
                                      [839.99481481, -103.88271605, 736.11209877]])

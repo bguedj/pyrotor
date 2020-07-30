@@ -12,13 +12,13 @@ from cvxopt import matrix
 
 
 def compute_optimized_coefficients(Q, W, phi, lin_const, sigma_inverse,
-                                   c_weight, use_quadratic_programming=True):
+                                   c_weight, kappa, use_quadratic_programming=True):
     """
     Todo
     """
     if use_quadratic_programming:
         # Use CVXOPT library
-        c_opt = minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight)
+        c_opt = minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa)
         c_opt = list(c_opt)
 
     return c_opt

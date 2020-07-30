@@ -22,6 +22,12 @@ from .data_analysis import compute_covariance
 from .data_analysis import compute_intersection_kernels
 from .data_analysis import compute_trajectories_cost
 from .data_analysis import compute_weights
+from .data_analysis import select_trajectories
+
+from .iterations import get_kappa_boundaries
+from .iterations import iterate_through_kappas
+
+from .optimization import compute_optimized_coefficients
 
 
 class Pyrotor():
@@ -36,7 +42,8 @@ class Pyrotor():
                  constraints,
                  basis,
                  basis_dimension,
-                 iteration_setting):
+                 iteration_setting,
+                 independent_variable):
         """
         Create a new Pyrotor optimization
 
@@ -51,32 +58,34 @@ class Pyrotor():
         self.iteration_setting = iteration_setting
 
         self.initialize_ref_coefficients()
-        self.reference_costs = compute_trajectories_cost(self.ref_coefficients)
-
-        self.weights = compute_weights(self.reference_costs)
+        self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
+                                                         self.quadratic_model)
         # Compute matrices involved on the final cost function
         self.W, self.Q = compute_objective_matrices(self.basis,
                                           self.basis_dimension,
                                           self.quadratic_model)
         # Compute the pseudo-inverse of variance-covariance matrix
-        self.sigma_inverse = compute_covariance(self.ref_coefficients)
+        _, self.sigma_inverse = compute_covariance(self.ref_coefficients)
+
         # Compute intersection between ker phi.T*phi and ker sigma
-        self.v_kernel = compute_intersection_kernels()
+        # self.v_kernel = compute_intersection_kernels()
+        # add_linear_constraints(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
-        self.phi = get_linear_endpoints()
-        add_linear_constraints(v_kernel, self.ref_coefficients)
-        # ou multiplier vector_omega par kappa
-        # Compute the weighted coefficients
+        self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
+                                                                 self.endpoints)
+        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 5)
+        self.weights = compute_weights(self.reference_costs)
         self.c_weight = compute_weighted_coef(self.ref_coefficients,
                                          self.weights,
                                          self.basis_dimension)
-        self.kappa_min, self.kappa_max = get_kappa_boundaries(x, Q, W,
-                                                              sigma_inverse, c_weight)
+        self.kappa_min, self.kappa_max = get_kappa_boundaries(self.ref_coefficients, self.Q, self.W,
+                                                              self.sigma_inverse, self.c_weight)
+        self.independent_variable = independent_variable
 
     def initialize_ref_coefficients(self):
-        self.ref_coefficients = compute_ref_coefficients(self.ref_trajectories,
-                                                         self.basis,
-                                                         self.basis_dimension)
+        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+                                                      self.basis,
+                                                      self.basis_dimension)
 
     def _compute_trajectory(self):
         """
@@ -85,12 +94,13 @@ class Pyrotor():
         c_opt = compute_optimized_coefficients(self.Q,
                                                self.W,
                                                self.phi,
-                                               self.lin_const,
+                                               self.linear_constraints,
                                                self.sigma_inverse,
-                                               self.c_weight)
+                                               self.c_weight,
+                                               self.kappa)
         # Construction optimized trajectory from coefficients
         self.trajectory = coef_to_trajectory(c_opt,
-                                             self.longest_ref_climb_duration,
+                                             self.independent_variable["points_nb"],
                                              self.basis,
                                              self.basis_dimension)
         self.is_valid = is_in_constraints(self.trajectory, self.constraints)
@@ -100,4 +110,4 @@ class Pyrotor():
         Compute the optimized trajectory
         """
         iterate_through_kappas(self, self.kappa_min, self.kappa_max)
-        self.optimized_cost = compute_cost(self.y_opt)
+        # self.optimized_cost = compute_cost(self.trajectory)

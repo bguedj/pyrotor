@@ -33,7 +33,7 @@ def get_linear_endpoints(basis_dimensions, endpoints):
     """
     phi = build_matrix_endpoints(basis_dimensions)
     linear_endpoints = format_endpoints(phi, endpoints)
-    return linear_endpoints
+    return linear_endpoints, phi
 
 
 def build_matrix_endpoints(basis_dimensions):

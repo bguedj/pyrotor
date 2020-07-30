@@ -43,7 +43,7 @@ def compute_covariance(X):
     covariance = cov.covariance_
     precision = cov.precision_
 
-    return covariance, precision
+    return covariance, np.diag(np.diag(precision))
 
 
 def compute_trajectories_cost(trajectories, quad_model, basis_dimension=None):
@@ -90,8 +90,7 @@ def compute_trajectories_cost(trajectories, quad_model, basis_dimension=None):
 
 def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
     """
-    Return the trajectories associated with the smallest costs together with
-    the cost values
+    Return the trajectories associated with the smallest costs
 
     Inputs:
         - trajectories: list of pd.DataFrame
@@ -104,17 +103,14 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
     Ouputs:
         - best_trajectories: list of pd.DataFrame
             List containing the best trajectories
-        - best_cost: ndarray
-            Array containing the costs of the best trajectories
 
     """
     # Sort indices with respect to costs
     I = sorted(range(len(trajectories)), key = lambda k: trajectories_cost[k])
     # Keep the first ones
     best_trajectories = [trajectories[i] for i in I[:trajectories_nb]]
-    best_cost = [trajectories_cost[i] for i in I[:trajectories_nb]]
 
-    return best_trajectories, np.array(best_cost)
+    return best_trajectories
 
 
 def compute_weights(trajectories_cost, f=None):

@@ -1,5 +1,7 @@
 import numpy as np
 
+from .cost_functions import compute_f
+from .cost_functions import compute_g
 
 """
 Describe the iterative process performed while optimizing trajectories.
@@ -55,7 +57,7 @@ def compute_kappa_min(kappa_mean):
         - kappa_min: float
             Supposed possible minimum value of kappa
     """
-    return kappa_mean / 1000
+    return 0
 
 
 def compute_kappa_max(kappa_mean):
@@ -70,7 +72,7 @@ def compute_kappa_max(kappa_mean):
             - kappa_max: float
                 Supposed possible maximum value of kappa
     """
-    return kappa_mean * 1000
+    return kappa_mean
 
 
 def compute_kappa_mean(f, g):
@@ -89,55 +91,8 @@ def compute_kappa_mean(f, g):
     """
     f = np.array(f)
     g = np.array(g)
-    kappa = f/g
+    kappa = np.abs(f/g)
     return np.mean(kappa)
-
-
-def compute_f(x, sigma_inverse, c_weight):
-    """
-    Evaluate the coefficients of a single trajectory over f. Where f is the
-    cost function given by the user.
-
-    Inputs:
-        - x: ndarray
-            Coefficients of a single trajectory.
-        - sigma_inverse: ndarray
-            Pseudoinverse of the covariance matrix of the reference
-            coefficients.
-        - c_weight: ndarray
-            Coefficients of a weighted trajectory
-
-    Output:
-        - cost: float
-            The cost of the given trajectory (by its coefficients) over the
-            cost function given by the user.
-    """
-    a = np.dot(np.dot(x.T, sigma_inverse), x)
-    b = np.dot(2 * np.dot(sigma_inverse, c_weight).T, x)
-    return a - b
-
-
-def compute_g(x, Q, W):
-    """
-    Evaluate the coefficients of a single trajectory over g. Where g is the
-    function penalizing the distance between the optimized trajectory and the
-    reference trajectories.
-
-    Inputs:
-        - x: ndarray
-            Coefficients of a single trajectory.
-        - Q: ndarray
-            Matrix of the quadratic term.
-        - W: ndarray
-            Vector of the linear term (without intercept).
-
-    Output:
-        - g(x): float
-            Evaluation of x over g.
-    """
-    a = np.dot(np.dot(x.T, Q), x)
-    b = np.dot(W.T, x)
-    return a + b
 
 
 def iterate_through_kappas(trajectory, kappa_min, kappa_max):
@@ -153,12 +108,13 @@ def iterate_through_kappas(trajectory, kappa_min, kappa_max):
         - kappa_max: float
             Supposed maximum possible kappa
     """
-    trajectory.kappas = np.linspace(kappa_min, kappa_max, 1000)
+    trajectory.kappas = np.linspace(kappa_min, kappa_max, 100000)
+    print(trajectory.kappas)
     trajectory.i_binary_search = 0
     binary_search_best_trajectory(trajectory,
                                   len(trajectory.kappas)-1,
                                   len(trajectory.kappas)-1)
-    if not self.is_valid:
+    if not trajectory.is_valid:
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
 
@@ -174,11 +130,15 @@ def binary_search_best_trajectory(trajectory, i, step):
     """
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1
+
+    print(i)
+    print(step)
     if i < 0:
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
     trajectory.kappa = trajectory.kappas[i]
-    trajectory.compute_trajectory()
+    print(trajectory.kappa)
+    trajectory._compute_trajectory()
 
     step = step//2
     if not trajectory.is_valid:
@@ -186,5 +146,6 @@ def binary_search_best_trajectory(trajectory, i, step):
             step = 1
         binary_search_best_trajectory(trajectory, i-step, step)
     else:
+        print('is valid! :D')
         if len(trajectory.kappas)-1 != i and step != 0:
             binary_search_best_trajectory(trajectory, i+step, step)
