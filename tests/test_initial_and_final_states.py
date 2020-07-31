@@ -40,7 +40,7 @@ def test_format_endpoints():
 
 def test_get_linear_endpoints():
     basis_dimensions = {"A": 3, "B": 2}
-    phi = np.array([[1., -1.,  1.,  0.,  0.],
+    expected_phi = np.array([[1., -1.,  1.,  0.,  0.],
                     [0.,  0.,  0.,  1., -1.],
                     [1.,  1.,  1.,  0.,  0.],
                     [0.,  0.,  0.,  1.,  1.]])
@@ -50,8 +50,9 @@ def test_get_linear_endpoints():
     lb = np.array([0, 3, 1, 5])
     ub = np.array([2, 7, 3, 9])
 
-    result = get_linear_endpoints(basis_dimensions, endpoints)
+    linear_endpoints, phi = get_linear_endpoints(basis_dimensions, endpoints)
 
-    assert (phi == result.A).all()
-    assert (lb == result.lb).all()
-    assert (ub == result.ub).all()
+    assert (phi == linear_endpoints.A).all()
+    assert (lb == linear_endpoints.lb).all()
+    assert (ub == linear_endpoints.ub).all()
+    assert (phi == expected_phi).all()

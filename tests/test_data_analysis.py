@@ -13,6 +13,7 @@ from pyrotor.data_analysis import nb_samples_is_sufficient
 from pyrotor.data_analysis import compute_covariance
 from pyrotor.data_analysis import select_trajectories
 from pyrotor.data_analysis import compute_weights
+from pyrotor.data_analysis import compute_trajectories_cost
 
 
 def test_nb_samples_is_sufficient():
@@ -45,7 +46,7 @@ def test_compute_covariance():
                                      [-125.01851852, 21.13580247, -103.88271605],
                                      [839.99481481, -103.88271605, 736.11209877]])
     expected_precision1 = np.array([[0.01280836, -0.03140317, -0.01859481],
-                                    [-0.03140317, 0.0788133 , 0.04741013],
+                                    [-0.03140317, 0.0788133, 0.04741013],
                                     [-0.01859481, 0.04741013, 0.02881532]])
     expected_covariance2 = np.array([[1.76, -0.31, 1.43],
                                      [-0.31, 1.84, 1.51],
@@ -60,7 +61,7 @@ def test_compute_covariance():
     np.testing.assert_almost_equal(precision2, expected_precision2)
 
 
-def test_compute_cost():
+def test_compute_trajectories_cost():
       # TODO: Test in case quad_model is a path to a pickle model
       trajectory1 = pd.DataFrame({"A": [1, 1, 1],
                                   "B": [1, 1, 1]})
@@ -73,7 +74,7 @@ def test_compute_cost():
       q = np.eye(2)
       quad_model = [w, q]
 
-      trajectories_cost = compute_cost(trajectories, quad_model)
+      trajectories_cost = compute_trajectories_cost(trajectories, quad_model)
 
       expected_trajectories_cost = np.array([-6, 55, -2])
 
@@ -81,23 +82,23 @@ def test_compute_cost():
 
 
 def test_select_trajectories():
-      trajectory1 = pd.DataFrame({"A": [1, 1, 1],
-                                  "B": [1, 1, 1]})
-      trajectory2 = pd.DataFrame({"A": [3, 5, 7],
-                                  "B": [3, 2, 1]})
-      trajectory3 = pd.DataFrame({"A": [0, 0, 1],
-                                  "B": [0, 1, 2]})
-      trajectories = [trajectory1, trajectory2, trajectory3]
-      trajectories_cost = np.array([-6, 55, -2])
-      trajectories_nb = 2
+    trajectory1 = pd.DataFrame({"A": [1, 1, 1],
+                               "B": [1, 1, 1]})
+    trajectory2 = pd.DataFrame({"A": [3, 5, 7],
+                               "B": [3, 2, 1]})
+    trajectory3 = pd.DataFrame({"A": [0, 0, 1],
+                               "B": [0, 1, 2]})
+    trajectories = [trajectory1, trajectory2, trajectory3]
+    trajectories_cost = np.array([-6, 55, -2])
+    trajectories_nb = 2
 
-      best_trajectories, best_cost = select_trajectories(trajectories, trajectories_cost, trajectories_nb)
+    best_trajectories = select_trajectories(trajectories, trajectories_cost, trajectories_nb)
 
-      expected_best_trajectories = [trajectory1, trajectory3]
-      expected_best_cost = np.array([-6, -2])
+    expected_best_trajectories = [trajectory1, trajectory3]
 
-      assert best_trajectories == expected_best_trajectories
-      np.testing.assert_equal(best_cost, expected_best_cost)
+    pd.testing.assert_frame_equal(best_trajectories[0], expected_best_trajectories[0])
+    pd.testing.assert_frame_equal(best_trajectories[1], expected_best_trajectories[1])
+    assert len(best_trajectories) == len(expected_best_trajectories)
 
 
 def test_compute_weights():

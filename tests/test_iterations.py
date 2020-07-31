@@ -24,8 +24,8 @@ def test_get_kappa_boundaries():
     W = np.array([2, 3])
     sigma_inverse = np.array([[1, 2], [3, 4]])
     c_weight = np.array([1, 1])
-    expected_kappa_min = -2e-4
-    expected_kappa_max = -2e2
+    expected_kappa_min = 0
+    expected_kappa_max = 0.4
     kappa_min, kappa_max = get_kappa_boundaries(x, Q, W,
                                                 sigma_inverse, c_weight)
     assert kappa_min == expected_kappa_min
@@ -34,14 +34,14 @@ def test_get_kappa_boundaries():
 
 def test_compute_kappa_min():
     kappa_mean = 1
-    expected_kappa_min = 1e-3
+    expected_kappa_min = 0
     kappa_min = compute_kappa_min(kappa_mean)
     assert kappa_min == expected_kappa_min
 
 
 def test_compute_kappa_max():
     kappa_mean = 1
-    expected_kappa_min = 1e3
+    expected_kappa_min = 2
     kappa_min = compute_kappa_max(kappa_mean)
     assert kappa_min == expected_kappa_min
 
@@ -81,7 +81,7 @@ class TestTrajectoryIterations(unittest.TestCase):
 
         self.trajectory.compute_trajectory = self.fake_compute_trajectory
         binary_search_best_trajectory(self.trajectory, 2, 0)
-        assert self.i_call == 1
+        assert self.i_call == 0
 
         # FIXME: to test when required dependencies tested
         # # case 3:

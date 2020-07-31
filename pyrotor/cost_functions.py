@@ -60,3 +60,4 @@ def compute_cost():
     """
     Compute the cost of a trajectory given the quadratic model of the user.
     """
+    pass

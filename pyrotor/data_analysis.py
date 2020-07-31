@@ -110,7 +110,7 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
     I = sorted(range(len(trajectories)), key = lambda k: trajectories_cost[k])
     # Keep the first ones
     best_trajectories = [trajectories[i] for i in I[:trajectories_nb]]
-
+    print(type(best_trajectories[0]))
     return best_trajectories
 
 
