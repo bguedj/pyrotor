@@ -72,7 +72,7 @@ def compute_kappa_max(kappa_mean):
             - kappa_max: float
                 Supposed possible maximum value of kappa
     """
-    return 200
+    return kappa_mean
 
 
 def compute_kappa_mean(f, g):

@@ -14,8 +14,6 @@ from pyrotor.iterations import get_kappa_boundaries
 from pyrotor.iterations import compute_kappa_min
 from pyrotor.iterations import compute_kappa_max
 from pyrotor.iterations import compute_kappa_mean
-from pyrotor.iterations import compute_f
-from pyrotor.iterations import compute_g
 from pyrotor.iterations import binary_search_best_trajectory
 from pyrotor.iterations import iterate_through_kappas
 
@@ -54,25 +52,6 @@ def test_compute_kappa_mean():
     expected_kappa_mean = 0.5
     kappa_mean = compute_kappa_mean(f_0, g_0)
     assert kappa_mean == expected_kappa_mean
-
-
-def test_compute_f():
-    x = np.array([1, 2])
-    sigma_inverse = np.array([[1, 2], [3, 4]])
-    c_weight = np.array([1, 1])
-
-    expected_f_0 = -7
-    f_0 = compute_f(x, sigma_inverse, c_weight)
-    assert f_0 == expected_f_0
-
-
-def test_compute_g():
-    x = np.array([1, 2])
-    Q = np.array([[1, 2], [3, 4]])
-    W = np.array([2, 3])
-    expected_g_0 = 35
-    g_0 = compute_g(x, Q, W)
-    assert g_0 == expected_g_0
 
 
 class TestTrajectoryIterations(unittest.TestCase):
