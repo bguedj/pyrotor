@@ -1,17 +1,15 @@
 # pyrotor
-
-- - - -
-
 *Trajectory optimization package*
 
-- - - - 
-
+- - - -
 ### Installation
 
+```Bash
 $ pip install pyrotor
+```
 
+- - - - 
 ### Getting started
-
 ```Python
 import matplotlib.pyplot as plt
 import numpy as np
