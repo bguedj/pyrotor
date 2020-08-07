@@ -109,7 +109,6 @@ mr_pyrotor = pyrotor.Pyrotor(quadratic_model,
                              constraints, 
                              basis, 
                              basis_dimension, 
-                             iteration_setting, 
                              independent_variable, 
                              n_best_trajectory_to_use=20,
                              verbose=False)
