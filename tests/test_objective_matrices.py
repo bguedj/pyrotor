@@ -33,7 +33,7 @@ def test_extend_matrix():
                            [0., 2., 0., 0., 4.],
                            [0., 0., 3., 0., 0.],
                            [2., 0., 0., 4., 0.],
-                           [0., 4., 0., 0., 8.]])    
+                           [0., 4., 0., 0., 8.]])
 
     np.testing.assert_almost_equal(W, expected_W)
     np.testing.assert_almost_equal(Q, expected_Q)
@@ -43,10 +43,11 @@ def test_compute_objective_matrices():
     # TODO: test in case 'quad_model' is a path for a trained model
     basis = 'legendre'
     basis_dimension = {"A": 3, "B": 2}
+    c = 0
     w = np.array([1., 2.])
     q = np.array([[1., 2.],
                   [2., 4.]])
-    quad_model = [w, q]
+    quad_model = [c, w, q]
     W, Q = compute_objective_matrices(basis, basis_dimension, quad_model)
     expected_W = np.array([1., 0., 0., 2., 0.])
     expected_Q = np.array([[1., 0., 0., 2., 0.],
@@ -56,5 +57,4 @@ def test_compute_objective_matrices():
                            [0., 2/3, 0., 0., 4/3]])
 
     np.testing.assert_almost_equal(W, expected_W)
-    np.testing.assert_almost_equal(Q, expected_Q) 
-
+    np.testing.assert_almost_equal(Q, expected_Q)

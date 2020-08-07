@@ -46,6 +46,7 @@ class Pyrotor():
                  basis_dimension,
                  iteration_setting,
                  independent_variable,
+                 n_best_trajectory_to_use=10,
                  verbose=True):
         """
         Create a new Pyrotor optimization
@@ -59,6 +60,7 @@ class Pyrotor():
         self.basis = basis
         self.basis_dimension = basis_dimension
         self.iteration_setting = iteration_setting
+        self.n_best_trajectory_to_use = n_best_trajectory_to_use
         self.verbose = verbose
 
         self.initialize_ref_coefficients()
@@ -77,7 +79,9 @@ class Pyrotor():
         # Init endpoints constraints
         self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
                                                                  self.endpoints)
-        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 10)
+        self.reference_trajectories = select_trajectories(self.reference_trajectories,
+                                                          self.reference_costs,
+                                                          self.n_best_trajectory_to_use)
         self.initialize_ref_coefficients()
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)

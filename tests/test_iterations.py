@@ -71,7 +71,7 @@ class TestTrajectoryIterations(unittest.TestCase):
         # case 1: i < 0 -> ValueError as we can't find a solution to this
         # optimization
         with pytest.raises(ValueError):
-            binary_search_best_trajectory(self.trajectory, -1, 5)
+            binary_search_best_trajectory(self.trajectory, -1, 5, False)
 
         # case 2:
         self.trajectory.is_valid = True
@@ -80,7 +80,7 @@ class TestTrajectoryIterations(unittest.TestCase):
         self.i_call = 0
 
         self.trajectory.compute_trajectory = self.fake_compute_trajectory
-        binary_search_best_trajectory(self.trajectory, 2, 0)
+        binary_search_best_trajectory(self.trajectory, 2, 0, False)
         assert self.i_call == 0
 
         # FIXME: to test when required dependencies tested
