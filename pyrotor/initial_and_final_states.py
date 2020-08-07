@@ -54,7 +54,7 @@ def build_matrix_endpoints(basis_dimensions):
     rows_low = []  # Values at T = 1 (because flights defined on [0,1])
     for variable in basis_dimensions:
         row_0 = []
-        row_T = []
+        row_t = []
         for k in range(basis_dimensions[variable]):
             # Create k-th Legendre polynomial on [0,1] and evaluate at
             # the endpoints
@@ -62,9 +62,9 @@ def build_matrix_endpoints(basis_dimensions):
             _, basis_k_evaluated = legendre.Legendre.linspace(basis_k,
                                                               n=2)
             row_0.append(basis_k_evaluated[0])
-            row_T.append(basis_k_evaluated[1])
+            row_t.append(basis_k_evaluated[1])
         rows_up.append(row_0)
-        rows_low.append(row_T)
+        rows_low.append(row_t)
     # Define upper block
     phi_u = block_diag(*rows_up)
     # Define lower block
@@ -94,18 +94,21 @@ def format_endpoints(phi, endpoints):
                         - endpoints[variable]['delta']
                         for variable in endpoints]
     # Define lower endpoints at T
-    left_endpoints_T = [endpoints[variable]['end'] - endpoints[variable]['delta']
+    left_endpoints_t = [endpoints[variable]['end']
+                        - endpoints[variable]['delta']
                         for variable in endpoints]
     # Merge to obtain lower endpoints
-    left_endpoints = left_endpoints_0 + left_endpoints_T
+    left_endpoints = left_endpoints_0 + left_endpoints_t
     # Define upper endpoints at 0
-    right_endpoints_0 = [endpoints[variable]['start'] + endpoints[variable]['delta']
+    right_endpoints_0 = [endpoints[variable]['start']
+                         + endpoints[variable]['delta']
                          for variable in endpoints]
     # Define upper endpoints at T
-    right_endpoints_T = [endpoints[variable]['end'] + endpoints[variable]['delta']
+    right_endpoints_t = [endpoints[variable]['end']
+                         + endpoints[variable]['delta']
                          for variable in endpoints]
     # Merge to obtain upper endpoints
-    right_endpoints = right_endpoints_0 + right_endpoints_T
+    right_endpoints = right_endpoints_0 + right_endpoints_t
 
     linear_endpoints = LinearConstraint(phi, left_endpoints, right_endpoints)
 

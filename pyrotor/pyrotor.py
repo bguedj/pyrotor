@@ -18,9 +18,10 @@ from .constraints import is_in_constraints
 
 from .objective_matrices import compute_objective_matrices
 
+from .cost_functions import compute_trajectories_cost
+
 from .data_analysis import compute_covariance
 from .data_analysis import compute_intersection_kernels
-from .data_analysis import compute_trajectories_cost
 from .data_analysis import compute_weights
 from .data_analysis import select_trajectories
 
@@ -91,7 +92,7 @@ class Pyrotor():
                                                       self.basis,
                                                       self.basis_dimension)
 
-    def _compute_trajectory(self):
+    def compute_one_iteration(self):
         """
         Compute a trajectory in accordance with aeronautical standards
         """

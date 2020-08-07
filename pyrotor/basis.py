@@ -24,28 +24,28 @@ def compute_legendre_features(basis_dimension):
             Matrix containing the dot products
     """
     # Trajectories are formally defined on [0,1] so the interval length is 1
-    T = 1
+    duration = 1
     # Compute the dimension of the problem
-    d = np.sum([basis_dimension[elt] for elt in basis_dimension])
+    dimension = np.sum([basis_dimension[elt] for elt in basis_dimension])
     # For Legendre polynomials, mean = 0 except when k = 0
-    mean = np.zeros(d)
-    k = 0
+    mean = np.zeros(dimension)
+    i = 0
     for variable in basis_dimension:
-        mean[k] += T
-        k += basis_dimension[variable]
+        mean[i] += duration
+        i += basis_dimension[variable]
     # Compute dot product between the polynomials
-    # Here use <P_k, P_l> = T / (2*k + 1) * delta_kl
-    dot_product = np.zeros([d, d])
-    k, l = 0, 0
+    # Here use <P_i, P_j> = duration / (2*i + 1) * delta_il=j
+    dot_product = np.zeros([dimension, dimension])
+    i, j = 0, 0
     for variable1 in basis_dimension:
         for variable2 in basis_dimension:
-            m = min([basis_dimension[variable1],
-                     basis_dimension[variable2]])
-            for n in range(m):
-                # Squared L^2-norm of the n-th Legendre polynomial
-                dot_product[k + n, l + n] = T / (2*n + 1)
-            l += basis_dimension[variable2]
-        l = 0
-        k += basis_dimension[variable1]
+            k_range = min([basis_dimension[variable1],
+                           basis_dimension[variable2]])
+            for k in range(k_range):
+                # Squared L^2-norm of the k-th Legendre polynomial
+                dot_product[i + k, j + k] = duration / (2*k + 1)
+            j += basis_dimension[variable2]
+        j = 0
+        i += basis_dimension[variable1]
 
     return mean, dot_product

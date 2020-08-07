@@ -1,23 +1,27 @@
-import numpy as np
-
-from .cost_functions import compute_f
-from .cost_functions import compute_g
+# !/usr/bin/env python
+# -*- coding:utf-8 -*-
 
 """
 Describe the iterative process performed while optimizing trajectories.
 """
 
+import numpy as np
 
-def get_kappa_boundaries(reference_coefficients, q, w, sigma_inverse, c_weight):
+from .cost_functions import compute_f
+from .cost_functions import compute_g
+
+
+def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
+                         sigma_inverse, c_weight):
     """
     Give the possible minumum and maximum supposed value of kappa.
 
     Inputs:
         - reference_coefficients: ndarray
             Coefficients of reference
-        - q: ndarray
+        - vector_q: ndarray
             Matrix of the quadratic term
-        - w: ndarray
+        - vector_w: ndarray
             Vector of the linear term (without intercept)
         - sigma_inverse: ndarray
             Pseudoinverse of the covariance matrix of the reference
@@ -32,12 +36,14 @@ def get_kappa_boundaries(reference_coefficients, q, w, sigma_inverse, c_weight):
             Supposed possible maximum value of kappa
 
     """
-    f = []
-    g = []
+    evaluations_f = []
+    evaluations_g = []
     for reference_coefficient in reference_coefficients:
-        f.append(compute_f(reference_coefficient, sigma_inverse, c_weight))
-        g.append(compute_g(reference_coefficient, q, w))
-    kappa_mean = compute_kappa_mean(f, g)
+        evaluations_f.append(compute_f(reference_coefficient, sigma_inverse,
+                                       c_weight))
+        evaluations_g.append(compute_g(reference_coefficient, matrix_q,
+                                       vector_w))
+    kappa_mean = compute_kappa_mean(evaluations_f, evaluations_g)
 
     kappa_min = compute_kappa_min(kappa_mean)
     kappa_max = compute_kappa_max(kappa_mean)
@@ -57,7 +63,7 @@ def compute_kappa_min(kappa_mean):
         - kappa_min: float
             Supposed possible minimum value of kappa
     """
-    return 0
+    return kappa_mean * 0
 
 
 def compute_kappa_max(kappa_mean):
@@ -75,23 +81,23 @@ def compute_kappa_max(kappa_mean):
     return 2 * kappa_mean
 
 
-def compute_kappa_mean(f, g):
+def compute_kappa_mean(evaluations_f, evaluations_g):
     """
     Compute the mean kappa
 
     Inputs:
-        - f: list
+        - evaluations_f: list
             Evaluations of several reference coefficients over f
-        - f: list
+        - evaluations_g: list
             Evaluations of several reference coefficients over g
 
     Output:
         kappa_mean: float
             Mean kappa
     """
-    f = np.array(f)
-    g = np.array(g)
-    kappa = np.abs(f/g)
+    evaluations_f = np.array(evaluations_f)
+    evaluations_g = np.array(evaluations_g)
+    kappa = np.abs(evaluations_f/evaluations_g)
     return np.mean(kappa)
 
 
@@ -131,21 +137,21 @@ def binary_search_best_trajectory(trajectory, i, step):
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1
 
-    print(i)
-    print(step)
     if i < 0:
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
     trajectory.kappa = trajectory.kappas[i]
-    print(trajectory.kappa)
-    trajectory._compute_trajectory()
+    print("Kappa to try: {}".format(trajectory.kappa))
+    trajectory.compute_one_iteration()
 
     step = step//2
     if not trajectory.is_valid:
+        print('The trajectory found doesn\'t satisfy the constraints. Continue')
         if step == 0:
             step = 1
         binary_search_best_trajectory(trajectory, i-step, step)
     else:
-        print('is valid! :D')
         if len(trajectory.kappas)-1 != i and step != 0:
+            print('The trajectory found satisfy the constraints. Constinue')
             binary_search_best_trajectory(trajectory, i+step, step)
+        print('Optimal solution found. Finishing...')

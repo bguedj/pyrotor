@@ -61,6 +61,8 @@ def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
     lb = -np.array(lin_const.lb)
     h = np.concatenate((lin_const.ub, lb), axis=0)
     h = matrix(h, tc='d')
+    # remove output
+    solvers.options['show_progress'] = False
     # Solve using qp method
     optimize = solvers.qp(P, q, G, h)
     c_optimized = np.array(optimize['x']).ravel()
