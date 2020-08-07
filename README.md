@@ -1,5 +1,5 @@
 # pyrotor
-*Trajectory optimization package*
+*Trajectory optimization package based on data*
 
 - - - -
 ### Installation
@@ -103,13 +103,13 @@ for path in reference_trajectories_paths:
 
 # Create PyRotor class
 
-mr_pyrotor = pyrotor.Pyrotor(quadratic_model, 
-                             reference_trajectories, 
-                             endpoints, 
-                             constraints, 
-                             basis, 
-                             basis_dimension, 
-                             independent_variable, 
+mr_pyrotor = pyrotor.Pyrotor(quadratic_model,
+                             reference_trajectories,
+                             endpoints,
+                             constraints,
+                             basis,
+                             basis_dimension,
+                             independent_variable,
                              n_best_trajectory_to_use=20,
                              verbose=False)
 
@@ -150,4 +150,5 @@ ax3.set_xlim(left=0, right=1)
 ax3.set_ylim(bottom=0, top=1)
 ax3.legend()
 plt.tight_layout()
+plt.show()
 ```
