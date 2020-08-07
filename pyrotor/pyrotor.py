@@ -18,6 +18,7 @@ from .constraints import is_in_constraints
 
 from .objective_matrices import compute_objective_matrices
 
+from .cost_functions import compute_cost
 from .cost_functions import compute_trajectories_cost
 
 from .data_analysis import compute_covariance
@@ -44,7 +45,8 @@ class Pyrotor():
                  basis,
                  basis_dimension,
                  iteration_setting,
-                 independent_variable):
+                 independent_variable,
+                 verbose=True):
         """
         Create a new Pyrotor optimization
 
@@ -57,6 +59,7 @@ class Pyrotor():
         self.basis = basis
         self.basis_dimension = basis_dimension
         self.iteration_setting = iteration_setting
+        self.verbose = verbose
 
         self.initialize_ref_coefficients()
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
@@ -74,7 +77,7 @@ class Pyrotor():
         # Init endpoints constraints
         self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
                                                                  self.endpoints)
-        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 7)
+        self.reference_trajectories = select_trajectories(self.reference_trajectories, self.reference_costs, 10)
         self.initialize_ref_coefficients()
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
@@ -110,6 +113,8 @@ class Pyrotor():
                                                  self.basis,
                                                  self.basis_dimension)
             self.is_valid = is_in_constraints(self.trajectory, self.constraints)
+            self.trajectory_cost = compute_cost(self.trajectory,
+                                                self.quadratic_model)
         except ValueError:
             self.is_valid = False
 
@@ -117,5 +122,13 @@ class Pyrotor():
         """
         Compute the optimized trajectory
         """
-        iterate_through_kappas(self, self.kappa_min, self.kappa_max)
+        iterate_through_kappas(self, self.kappa_min, self.kappa_max,
+                               self.verbose)
         # self.optimized_cost = compute_cost(self.trajectory)
+
+    def compute_gains(self):
+        return self.reference_costs - self.trajectory_cost
+
+    def compute_relative_gains(self):
+        gains = (self.reference_costs - self.trajectory_cost) / self.reference_costs
+        return gains

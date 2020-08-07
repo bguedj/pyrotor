@@ -144,8 +144,7 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
         w, q = model_to_matrix(quad_model, basis_dimension)
     # Else extract w, q from quad_model
     else:
-        w, q = quad_model[0], quad_model[1]
+        w, q = quad_model[1], quad_model[2]
     # Compute W, Q appearing in the final cost function
     W, Q = extend_matrix(w, q, mean, dot_product, basis_dimension)
-
     return W, Q

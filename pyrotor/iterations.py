@@ -9,6 +9,7 @@ import numpy as np
 
 from .cost_functions import compute_f
 from .cost_functions import compute_g
+from .log import log
 
 
 def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
@@ -101,7 +102,7 @@ def compute_kappa_mean(evaluations_f, evaluations_g):
     return np.mean(kappa)
 
 
-def iterate_through_kappas(trajectory, kappa_min, kappa_max):
+def iterate_through_kappas(trajectory, kappa_min, kappa_max, verbose):
     """
     Iterate through the different kappas in order to find the optimum
     trajectory that follows our constraints.
@@ -115,16 +116,16 @@ def iterate_through_kappas(trajectory, kappa_min, kappa_max):
             Supposed maximum possible kappa
     """
     trajectory.kappas = np.linspace(kappa_min, kappa_max, 100000)
-    print(trajectory.kappas)
     trajectory.i_binary_search = 0
     binary_search_best_trajectory(trajectory,
                                   len(trajectory.kappas)-1,
-                                  len(trajectory.kappas)-1)
+                                  len(trajectory.kappas)-1,
+                                  verbose)
     if not trajectory.is_valid:
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
 
-def binary_search_best_trajectory(trajectory, i, step):
+def binary_search_best_trajectory(trajectory, i, step, verbose):
     """
     Perfor a binary search amoung all the kappas to find the best trajectory
 
@@ -134,6 +135,7 @@ def binary_search_best_trajectory(trajectory, i, step):
         - step: int
             size of the current split
     """
+
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1
 
@@ -141,17 +143,19 @@ def binary_search_best_trajectory(trajectory, i, step):
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
     trajectory.kappa = trajectory.kappas[i]
-    print("Kappa to try: {}".format(trajectory.kappa))
     trajectory.compute_one_iteration()
+    log("Trajectory cost: {}".format(trajectory.trajectory_cost), verbose)
 
     step = step//2
     if not trajectory.is_valid:
-        print('The trajectory found doesn\'t satisfy the constraints. Continue')
+        log('The trajectory found doesn\'t satisfy the constraints. Continue', verbose)
         if step == 0:
             step = 1
-        binary_search_best_trajectory(trajectory, i-step, step)
+        binary_search_best_trajectory(trajectory, i-step, step, verbose)
     else:
         if len(trajectory.kappas)-1 != i and step != 0:
-            print('The trajectory found satisfy the constraints. Constinue')
-            binary_search_best_trajectory(trajectory, i+step, step)
-        print('Optimal solution found. Finishing...')
+            log('The trajectory found satisfy the constraints. Continue', verbose)
+            binary_search_best_trajectory(trajectory, i+step, step, verbose)
+        else:
+            log('The trajectory found satisfy the constraints.', verbose)
+            log('Optimal solution found. Finishing...', verbose)
