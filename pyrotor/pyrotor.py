@@ -44,7 +44,6 @@ class Pyrotor():
                  constraints,
                  basis,
                  basis_dimension,
-                 iteration_setting,
                  independent_variable,
                  n_best_trajectory_to_use=10,
                  verbose=True):
@@ -59,7 +58,6 @@ class Pyrotor():
         self.constraints = constraints
         self.basis = basis
         self.basis_dimension = basis_dimension
-        self.iteration_setting = iteration_setting
         self.n_best_trajectory_to_use = n_best_trajectory_to_use
         self.verbose = verbose
 

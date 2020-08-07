@@ -37,6 +37,7 @@ def model_to_matrix(path, basis_dimension):
     # Load model
     with open(path, 'rb') as file:
         model = pickle.load(file)
+    # FIXME: do not use "named_steps" for compatibility concerns
     # Get coefficients of the model (from make_pipeline of sklearn)
     coef = np.array(model.named_steps['lin_regr'].coef_)
     # Remove normalization from StandardScaler()
