@@ -11,9 +11,15 @@ import pandas as pd
 
 
 def load_toy_dataset():
+    """
+    Return a dataset with simple trajectories.
+
+    Output:
+        toy_dataset: list of DataFrame
+            A list of 16 simple trajectories.
+    """
     module_path = dirname(__file__)
     toy_dataset_path = join(module_path, 'toy_dataset', '*.csv')
-    print(toy_dataset_path)
     toy_dataset_paths = glob(toy_dataset_path)
     toy_dataset = []
     for path in toy_dataset_paths:
