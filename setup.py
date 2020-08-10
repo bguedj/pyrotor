@@ -10,6 +10,9 @@ setup(name='pyrotor',
       description='Trajectory optimization package based on data',
       long_description=README,
       packages=['pyrotor'],
+      package_data={
+          "pyrotor": ["toy_dataset/*.csv"]
+      },
       author_email="arthur.talpaert@isen.yncrea.fr",
       url="https://github.com/bguedj/pyrotor",
       license="MIT",
