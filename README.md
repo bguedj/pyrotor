@@ -8,7 +8,7 @@
 $ pip install pyrotor
 ```
 
-- - - - 
+- - - -
 ### Getting started
 ```Python
 import matplotlib.pyplot as plt
@@ -92,12 +92,7 @@ basis_dimension = {'x1': 3,
 
 # Import reference trajectories
 
-reference_trajectories_paths = glob('generated_trajectories_30_07_2020_10_12_21/*.csv')
-reference_trajectories = []
-for path in reference_trajectories_paths:
-    reference_trajectory = pd.read_csv(path, index_col=0)
-    reference_trajectories.append(reference_trajectory)
-
+reference_trajectories = pyrotor.datasets.load_toy_dataset()
 
 # Optimization
 
