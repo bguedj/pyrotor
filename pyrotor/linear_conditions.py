@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-Modelisation of optimization endpoints
+Modelisation of linear relations
 """
 
 import numpy as np
@@ -10,8 +10,18 @@ from numpy.polynomial import legendre
 from scipy.linalg import block_diag
 from scipy.optimize import LinearConstraint
 
-
+# rename file
 # TODO: add conditions from 'natural' correlations (V_2 matrix)
+
+
+def get_linear_conditions():
+    pass
+
+
+def get_implicit_matrix(sigma_inverse, phi):
+    """
+    """
+    pass
 
 
 def get_linear_endpoints(basis_dimensions, endpoints):
@@ -31,12 +41,12 @@ def get_linear_endpoints(basis_dimensions, endpoints):
             Initial and final states that the optimized trajectory must follow.
             ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
     """
-    phi = build_matrix_endpoints(basis_dimensions)
+    phi = get_endpoints_matrix(basis_dimensions)
     linear_endpoints = format_endpoints(phi, endpoints)
     return linear_endpoints, phi
 
 
-def build_matrix_endpoints(basis_dimensions):
+def get_endpoints_matrix(basis_dimensions):
     """
     Compute a matrix modelling the endpoints used for our optimization problem.
 
@@ -73,6 +83,10 @@ def build_matrix_endpoints(basis_dimensions):
     phi = np.concatenate((phi_u, phi_low), axis=0)
 
     return phi
+
+
+def get_endpoints_values(endpoints):
+    pass
 
 
 def format_endpoints(phi, endpoints):
@@ -113,3 +127,10 @@ def format_endpoints(phi, endpoints):
     linear_endpoints = LinearConstraint(phi, left_endpoints, right_endpoints)
 
     return linear_endpoints
+
+
+def get_implicit_values():
+    """
+
+    """
+    pass

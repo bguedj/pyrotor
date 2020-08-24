@@ -3,23 +3,23 @@ import numpy as np
 import pandas as pd
 from scipy.optimize import LinearConstraint
 
-from pyrotor.initial_and_final_states import build_matrix_endpoints
-from pyrotor.initial_and_final_states import format_endpoints
-from pyrotor.initial_and_final_states import get_linear_endpoints
+from pyrotor.linear_conditions import get_endpoints_matrix
+from pyrotor.linear_conditions import format_endpoints
+from pyrotor.linear_conditions import get_linear_endpoints
 
 
-def test_build_matrix_endpoints():
+def test_get_endpoints_matrix():
     basis_dimension = {"A": 2}
     expected = np.array([[1., -1.],
                          [1.,  1.]])
-    assert (expected == build_matrix_endpoints(basis_dimension)).all()
+    assert (expected == get_endpoints_matrix(basis_dimension)).all()
 
     basis_dimension = {"A": 3, "B": 2}
     expected = np.array([[1., -1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1., -1.],
                          [1.,  1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1.,  1.]])
-    assert (expected == build_matrix_endpoints(basis_dimension)).all()
+    assert (expected == get_endpoints_matrix(basis_dimension)).all()
 
 
 def test_format_endpoints():

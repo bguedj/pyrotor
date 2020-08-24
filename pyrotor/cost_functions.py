@@ -6,12 +6,14 @@ Compute the cost of a trajectory or directly on its coefficents
 """
 
 import numpy as np
+import pickle
 
 
 def compute_f(vector_x, sigma_inverse, c_weight):
     """
-    Evaluate the coefficients of a single trajectory over f. Where f is the
-    cost function given by the user.
+    Evaluate the coefficients of a single trajectory over g. Where g is the
+    function penalizing the distance between the optimized trajectory and the
+    reference trajectories.
 
     Inputs:
         - vector_x: ndarray
@@ -35,9 +37,8 @@ def compute_f(vector_x, sigma_inverse, c_weight):
 
 def compute_g(vector_x, matrix_q, vector_w):
     """
-    Evaluate the coefficients of a single trajectory over g. Where g is the
-    function penalizing the distance between the optimized trajectory and the
-    reference trajectories.
+    Evaluate the coefficients of a single trajectory over f. Where f is the
+    cost function given by the user.
 
     Inputs:
         - vector_x: ndarray
@@ -68,25 +69,90 @@ def compute_cost(trajectory, quadratic_model):
              The quadratic model of your cost function.
              Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)
     """
+    # TODO: remove "variable_names"
     constant_part = quadratic_model[0]
     linear_part = quadratic_model[1]
     quadratic_part = quadratic_model[2]
 
+    trajectory = trajectory.values
+
     constant_result = constant_part * trajectory.shape[0]
+    # to do include sampling frequency
+    linear_result = np.sum(trajectory * linear_part)
 
-    linear_result = np.sum(trajectory.values * linear_part)
-
-    quadratic_result = np.dot(trajectory.values, quadratic_part)
+    quadratic_result = np.dot(trajectory, quadratic_part)
     # ref: https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-
     # dot-product-calculating-only-the-diagonal-entries-of-the
-    quadratic_result = (quadratic_result * trajectory.values).sum(-1)
+    quadratic_result = (quadratic_result * trajectory).sum(-1)
     quadratic_result = np.sum(quadratic_result)
 
     return constant_result + linear_result + quadratic_result
 
 
-def compute_trajectories_cost(trajectories, quadratic_model,
-                              basis_dimension=None):
+def load_model(name):
+    """
+    Load model saved in a .pkl format
+
+    Input:
+        - name: string
+            Name of the .pkl file
+
+    Output:
+        - model: Python object
+            Loaded machine learning model, scipy class...
+    """
+    with open(name, 'rb') as file:
+        model = pickle.load(file)
+
+    return model
+
+
+def model_to_matrix(path, n_var):
+    """
+    From a quadratic model f(x), compute q and w such that
+    f(x) = <x, qx> + <w, x>
+
+    Inputs:
+        - path: string
+            Path for the folder containing the pickle model for FF
+        - n_var: int
+            Give the number of variable
+
+    Outputs:
+        - w: numpy array [1, n_var]
+            Vector of the linear term (without intercept)
+        - q: numpy arry [n_var, n_var]
+            Matrix of the quadratic term
+    """
+    # Load model
+    model = load_model(path)
+    # Get coefficients of the model (from make_pipeline of sk-learn)
+    coef = np.array(model.named_steps['lin_regr'].coef_)
+    # Remove normalization from StandardScaler()
+    std_ = np.sqrt(model.named_steps['scale'].var_)
+    coef /= std_
+    # Add the constant
+    c = model.named_steps['lin_regr'].intercept_
+    # Define w
+    w = coef[1:n_var+1]
+    # Define q starting by the upper part and deduce then the lower one
+    coef = np.delete(coef, range(n_var+1))
+    # Divide coef by two because a x^2 + b xy + c y^2 is associated with
+    # [[a, b/2],[b/2, c]]
+    coef /= 2
+    q = np.zeros([n_var, n_var])
+    for i in range(n_var):
+        q[i, i:] += coef[:n_var - i]
+        # Mutliply the diagonal by 2
+        q[i, i] *= 2
+        coef = np.delete(coef, range(n_var - i))
+    # Deduce the lower part
+    q += np.transpose(np.triu(q, 1))
+
+    return (c, w, q)
+
+
+def compute_trajectories_cost(trajectories, quadratic_model):
     """
     Compute the cost for each trajectory of a list
 
@@ -105,16 +171,16 @@ def compute_trajectories_cost(trajectories, quadratic_model,
             Array containing the cost of the trajectories
     """
     # If pickle model, compute w, q using model_to_matrix()
-    if isinstance(quadratic_model, str):
-        # Compute w, q associated with the quadratic model
-        vector_w, matrix_q = model_to_matrix(quadratic_model, basis_dimension)
-    # Else extract w, q from quad_model
-    else:
-        vector_w, matrix_q = quadratic_model[0], quadratic_model[1]
     trajectories_cost = []
-    # For each trajectory, compute total cost
-    for trajectory in trajectories:
-        trajectory_cost = compute_cost(trajectory, quadratic_model)
-        trajectories_cost.append(trajectory_cost)
-
+    if isinstance(quadratic_model, str):
+        # Compute cost directly from the sklearn model
+        model = load_model(quadratic_model)
+        for trajectory in trajectories:
+            trajectories_cost.append(model.predict(trajectory.values))
+    else:
+        # For each trajectory, compute total cost from the algebra formulation
+        for trajectory in trajectories:
+            trajectory_cost = compute_cost(trajectory,
+                                           quadratic_model)
+            trajectories_cost.append(trajectory_cost)
     return np.array(trajectories_cost)

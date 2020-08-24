@@ -32,7 +32,7 @@ def trajectory_to_coef(y, basis, basis_dimension):
     evaluation_points_nb = y.shape[0] - 1
     coef = []
     # Compute coefficients for each variable
-    for variable in y.columns:
+    for variable in basis_dimension:
         if basis == 'legendre':
             # NB: Use Legendre class to fix the domain of the basis
             # Here consider each trajectory to be defined on [0,1]

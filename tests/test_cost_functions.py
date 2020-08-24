@@ -46,6 +46,7 @@ def test_compute_cost():
 
 def test_compute_trajectories_cost():
     # TODO: Test in case quad_model is a path to a pickle model
+    basis_dimension = {'A': 3, 'B': 3}
     trajectory1 = pd.DataFrame({"A": [1, 1, 1],
                                 "B": [1, 1, 1]})
     trajectory2 = pd.DataFrame({"A": [3, 5, 7],

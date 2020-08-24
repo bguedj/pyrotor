@@ -12,7 +12,7 @@ from .projection import trajectories_to_coefs
 from .projection import coef_to_trajectory
 from .projection import compute_weighted_coef
 
-from .initial_and_final_states import get_linear_endpoints
+from .linear_conditions import get_linear_endpoints
 
 from .constraints import is_in_constraints
 
@@ -75,8 +75,12 @@ class Pyrotor():
         # self.v_kernel = compute_intersection_kernels()
         # add_linear_constraints(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
+        # to remove:
         self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
                                                                  self.endpoints)
+        # self.linear_relations, self.phi = get_linear_relations(self.basis_dimension,
+        #                                                        self.endpoints,
+        #                                                        self.sigma_inverse)
         self.reference_trajectories = select_trajectories(self.reference_trajectories,
                                                           self.reference_costs,
                                                           self.n_best_trajectory_to_use)
@@ -117,7 +121,9 @@ class Pyrotor():
             self.is_valid = is_in_constraints(self.trajectory, self.constraints)
             self.trajectory_cost = compute_cost(self.trajectory,
                                                 self.quadratic_model)
+            print("Ok")
         except ValueError:
+            print("Oink")
             self.is_valid = False
 
     def compute_optimal_trajectory(self):
