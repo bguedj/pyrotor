@@ -28,7 +28,7 @@ def trajectory_to_coef(y, basis, basis_dimension):
         - coef: list of pd.Series
             Each element of the list contains the coefficients of a variable
     """
-    # Number of evaluation points points
+    # Number of evaluation points
     evaluation_points_nb = y.shape[0] - 1
     coef = []
     # Compute coefficients for each variable
