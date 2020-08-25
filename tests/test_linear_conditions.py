@@ -9,17 +9,22 @@ from pyrotor.linear_conditions import get_linear_endpoints
 
 
 def test_get_endpoints_matrix():
-    basis_dimension = {"A": 2}
+    basis_dimensions = {"A": 2}
+    endpoints = {"A": {"start": 1, "end": 2, "delta": 1}}
     expected = np.array([[1., -1.],
                          [1.,  1.]])
-    assert (expected == get_endpoints_matrix(basis_dimension)).all()
+    endpoints_matrix = get_endpoints_matrix(basis_dimensions, endpoints)
+    assert (expected == endpoints_matrix).all()
 
     basis_dimension = {"A": 3, "B": 2}
+    endpoints = {'A': {'start': 1, 'end': 2, 'delta': 1},
+                 'B': {'start': 5, 'end': 7, 'delta': 2}}
     expected = np.array([[1., -1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1., -1.],
                          [1.,  1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1.,  1.]])
-    assert (expected == get_endpoints_matrix(basis_dimension)).all()
+    endpoints_matrix = get_endpoints_matrix(basis_dimension, endpoints)
+    assert (expected == endpoints_matrix).all()
 
 
 def test_format_endpoints():
@@ -55,4 +60,13 @@ def test_get_linear_endpoints():
     assert (phi == linear_endpoints.A).all()
     assert (lb == linear_endpoints.lb).all()
     assert (ub == linear_endpoints.ub).all()
+    assert (phi == expected_phi).all()
+
+    endpoints = {"B": {"start": 1, "end": 2, "delta": 1}}
+
+    expected_phi = np.array([[0, 0,  0,  1,  -1.],
+                             [0,  0,  0,  1., 1.]])
+
+    linear_endpoints, phi = get_linear_endpoints(basis_dimensions, endpoints)
+    print(phi)
     assert (phi == expected_phi).all()

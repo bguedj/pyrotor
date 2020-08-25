@@ -176,11 +176,13 @@ def compute_trajectories_cost(trajectories, quadratic_model):
         # Compute cost directly from the sklearn model
         model = load_model(quadratic_model)
         for trajectory in trajectories:
-            trajectories_cost.append(model.predict(trajectory.values))
+            trajectory_cost = np.sum(model.predict(trajectory.values))
+            trajectories_cost.append(trajectory_cost)
     else:
         # For each trajectory, compute total cost from the algebra formulation
         for trajectory in trajectories:
             trajectory_cost = compute_cost(trajectory,
                                            quadratic_model)
             trajectories_cost.append(trajectory_cost)
+    print(len(trajectories_cost))
     return np.array(trajectories_cost)

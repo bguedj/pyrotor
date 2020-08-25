@@ -78,6 +78,7 @@ class Pyrotor():
         # to remove:
         self.linear_constraints, self.phi = get_linear_endpoints(self.basis_dimension,
                                                                  self.endpoints)
+        print(self.phi)
         # self.linear_relations, self.phi = get_linear_relations(self.basis_dimension,
         #                                                        self.endpoints,
         #                                                        self.sigma_inverse)
