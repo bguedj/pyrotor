@@ -85,10 +85,11 @@ def compute_weights(trajectories_cost, weight_fonction=None):
             Function used to compute weights from the costs - Default function
             is f(x) = exp(-x)
     """
+    print(trajectories_cost)
     if weight_fonction:
         weights = weight_fonction(trajectories_cost)
     else:
-        weights = np.exp(-trajectories_cost)
+        weights = np.exp(trajectories_cost-np.max(trajectories_cost))
     # Normalize
     weights = weights / np.sum(weights)
 

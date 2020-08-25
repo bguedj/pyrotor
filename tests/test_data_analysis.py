@@ -92,8 +92,8 @@ def test_compute_weights():
     weights2 = compute_weights(trajectories_cost)
 
     expected_weights1 = np.array([4/77, 65/77, 8/77])
-    expected_weights2 = np.exp(-trajectories_cost)
-    expected_weights2 /= np.sum(np.exp(-trajectories_cost))
+    expected_weights2 = np.exp(trajectories_cost-np.max(trajectories_cost))
+    expected_weights2 /= np.sum(expected_weights2)
 
     np.testing.assert_almost_equal(weights1, expected_weights1)
     np.testing.assert_almost_equal(weights2, expected_weights2)

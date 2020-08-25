@@ -92,7 +92,7 @@ def compute_weighted_coef(coefs, weights, basis_dimension):
             Vector containing weighted sum of the coefficients
     """
     # Compute the dimension of the problem
-    K = np.sum([basis_dimension[elt] for elt in basis_dimension])
+    K = sum(basis_dimension.values())
     c_weight = np.zeros(K)
     # Compute the weighted sum
     for i, coef_i in enumerate(coefs):

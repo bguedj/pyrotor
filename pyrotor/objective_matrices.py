@@ -58,7 +58,6 @@ def model_to_matrix(path, basis_dimension):
         coef = np.delete(coef, range(n_var - i))
     # Deduce the lower part
     q += np.transpose(np.triu(q, 1))
-
     return w, q
 
 
