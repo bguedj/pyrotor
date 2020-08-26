@@ -12,6 +12,7 @@ import pandas as pd
 from pyrotor.cost_functions import compute_f
 from pyrotor.cost_functions import compute_g
 from pyrotor.cost_functions import compute_cost
+from pyrotor.cost_functions import compute_cost_by_time
 from pyrotor.cost_functions import compute_trajectories_cost
 
 
@@ -42,6 +43,19 @@ def test_compute_cost():
     quadratic_model = (constant_part, linear_part, quadratic_part)
     cost = compute_cost(trajectory, quadratic_model)
     assert cost == 128
+
+
+def test_compute_cost_by_time():
+    trajectory = pd.DataFrame({"A": [1, 3], "B": [2, 4]})
+    quadratic_part = np.array([[1, 0], [2, 3]])
+    linear_part = np.array([2, 1])
+    constant_part = 8
+    quadratic_model = (constant_part, linear_part, quadratic_part)
+
+    cost_by_time = compute_cost_by_time(trajectory, quadratic_model)
+    expected_cost_by_time = np.array([29, 99])
+
+    np.testing.assert_equal(cost_by_time, expected_cost_by_time)
 
 
 def test_compute_trajectories_cost():

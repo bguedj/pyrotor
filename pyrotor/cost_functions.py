@@ -57,6 +57,44 @@ def compute_g(vector_x, matrix_q, vector_w):
     return part_a + part_b
 
 
+def compute_cost_by_time(trajectory, quadratic_model):
+    """
+    Compute the cost of a trajectory at every time point given the quadratic
+    model of the user.
+    It is a vectorized version.
+
+    Inputs:
+        - trajectory: DataFrame
+            Your trajecotry
+        - quadratic_model: tuple or list
+             The quadratic model of your cost function.
+             Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)
+
+    Output:
+        - cost_by_time: ndarray
+            The trajectory cost at each time point
+    """
+    constant_part = quadratic_model[0]
+    linear_part = quadratic_model[1]
+    quadratic_part = quadratic_model[2]
+
+    trajectory = trajectory.values
+
+    constant_costs = constant_part * np.ones(trajectory.shape[0])
+    # to do include sampling frequency
+    linear_costs = np.sum(trajectory * linear_part, axis=1)
+
+    quadratic_costs = np.dot(trajectory, quadratic_part)
+    # ref: https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-
+    # dot-product-calculating-only-the-diagonal-entries-of-the
+    quadratic_costs = (quadratic_costs * trajectory).sum(-1)
+    quadratic_costs = quadratic_costs
+
+    print(linear_costs)
+
+    return constant_costs + linear_costs + quadratic_costs
+
+
 def compute_cost(trajectory, quadratic_model):
     """
     Compute the cost of a trajectory given the quadratic model of the user.
@@ -68,25 +106,13 @@ def compute_cost(trajectory, quadratic_model):
         - quadratic_model: tuple or list
              The quadratic model of your cost function.
              Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)
+
+    Output:
+        - trajectory_cost: float
+            The total cost of the trajectory
     """
-    # TODO: remove "variable_names"
-    constant_part = quadratic_model[0]
-    linear_part = quadratic_model[1]
-    quadratic_part = quadratic_model[2]
-
-    trajectory = trajectory.values
-
-    constant_result = constant_part * trajectory.shape[0]
-    # to do include sampling frequency
-    linear_result = np.sum(trajectory * linear_part)
-
-    quadratic_result = np.dot(trajectory, quadratic_part)
-    # ref: https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-
-    # dot-product-calculating-only-the-diagonal-entries-of-the
-    quadratic_result = (quadratic_result * trajectory).sum(-1)
-    quadratic_result = np.sum(quadratic_result)
-
-    return constant_result + linear_result + quadratic_result
+    cost_by_time = compute_cost_by_time(trajectory, quadratic_model)
+    return np.sum(cost_by_time)
 
 
 def load_model(name):
