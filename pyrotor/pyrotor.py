@@ -107,9 +107,6 @@ class Pyrotor():
         Compute a trajectory in accordance with aeronautical standards
         """
         try:
-            print("##########################")
-            print(self.kappa)
-            print(self.c_weight)
             c_opt = compute_optimized_coefficients(self.Q,
                                                    self.W,
                                                    self.phi,
@@ -117,21 +114,20 @@ class Pyrotor():
                                                    self.sigma_inverse,
                                                    self.c_weight,
                                                    self.kappa)
+<<<<<<< HEAD
             print("Coefficients = ", c_opt)
             print("compute_optimized_coefficients: ok")
+=======
+>>>>>>> 226f61c3352c51fa5465cf49acb49dd92b093525
             # Construction optimized trajectory from coefficients
             self.trajectory = coef_to_trajectory(c_opt,
                                                  self.independent_variable["points_nb"],
                                                  self.basis,
                                                  self.basis_dimension)
-            print("coef_to_trajectory: ok")
             self.is_valid = is_in_constraints(self.trajectory, self.constraints)
-            print("is_in_constraints: ok")
             self.trajectory_cost = compute_cost(self.trajectory,
                                                 self.quadratic_model)
-            print("Ok")
         except ValueError as e:
-            print("Oink")
             print(e)
             self.is_valid = False
             self.trajectory_cost = np.nan
