@@ -114,11 +114,8 @@ class Pyrotor():
                                                    self.sigma_inverse,
                                                    self.c_weight,
                                                    self.kappa)
-<<<<<<< HEAD
             print("Coefficients = ", c_opt)
             print("compute_optimized_coefficients: ok")
-=======
->>>>>>> 226f61c3352c51fa5465cf49acb49dd92b093525
             # Construction optimized trajectory from coefficients
             self.trajectory = coef_to_trajectory(c_opt,
                                                  self.independent_variable["points_nb"],
