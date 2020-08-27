@@ -19,6 +19,7 @@ from .constraints import is_in_constraints
 from .objective_matrices import compute_objective_matrices
 
 from .cost_functions import compute_cost
+from .cost_functions import compute_cost_by_time
 from .cost_functions import compute_trajectories_cost
 
 from .data_analysis import compute_covariance
@@ -119,9 +120,13 @@ class Pyrotor():
                                                  self.independent_variable["points_nb"],
                                                  self.basis,
                                                  self.basis_dimension)
-            self.is_valid = is_in_constraints(self.trajectory, self.constraints)
-            self.trajectory_cost = compute_cost(self.trajectory,
-                                                self.quadratic_model)
+            self.cost_by_time = compute_cost_by_time(self.trajectory,
+                                                      self.quadratic_model)
+            self.cost = compute_cost(self.trajectory,
+                                     self.quadratic_model)
+            self.is_valid = is_in_constraints(self.trajectory,
+                                              self.constraints,
+                                              self.cost_by_time)
         except ValueError as e:
             print(e)
             self.is_valid = False

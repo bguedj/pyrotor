@@ -7,7 +7,7 @@ Constraints verification
 """
 
 
-def is_in_constraints(trajectory, constraints):
+def is_in_constraints(trajectory, constraints, costs_by_time):
     """
     Check wether or not the trajectory is complying to each constraints.
 
@@ -27,7 +27,7 @@ def is_in_constraints(trajectory, constraints):
              Wether or not it is in constraints
     """
     for constraint in constraints:
-        evaluation = constraint(trajectory)
-        if (evaluation < 0).any():
+        evaluation = constraint(trajectory, costs_by_time)
+        if (evaluation <= 0).any():
             return False
     return True

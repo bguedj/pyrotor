@@ -57,6 +57,16 @@ def compute_g(vector_x, matrix_q, vector_w):
     return part_a + part_b
 
 
+def predict_cost_by_time(trajectory, quadratic_model):
+    """
+
+    """
+    # Compute cost directly from the sklearn model
+    model = load_model(quadratic_model)
+    cost_by_time = model.predict(trajectory.values)
+    return cost_by_time
+
+
 def compute_cost_by_time(trajectory, quadratic_model):
     """
     Compute the cost of a trajectory at every time point given the quadratic
@@ -74,26 +84,23 @@ def compute_cost_by_time(trajectory, quadratic_model):
         - cost_by_time: ndarray
             The trajectory cost at each time point
     """
-    constant_part = quadratic_model[0]
-    linear_part = quadratic_model[1]
-    quadratic_part = quadratic_model[2]
+    if isinstance(quadratic_model, str):
+        return predict_cost_by_time(trajectory, quadratic_model)
+    else:
+        constant_part = quadratic_model[0]
+        linear_part = quadratic_model[1]
+        quadratic_part = quadratic_model[2]
+        trajectory = trajectory.values
+        constant_costs = constant_part * np.ones(trajectory.shape[0], dtype=np.float32)
+        # to do include sampling frequency
+        linear_costs = np.sum(trajectory * linear_part, axis=1)
 
-    trajectory = trajectory.values
+        quadratic_costs = np.dot(trajectory, quadratic_part)
+        # ref: https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-
+        # dot-product-calculating-only-the-diagonal-entries-of-the
+        quadratic_costs = (quadratic_costs * trajectory).sum(-1)
 
-    constant_costs = constant_part * np.ones(trajectory.shape[0])
-    # to do include sampling frequency
-    linear_costs = np.sum(trajectory * linear_part, axis=1)
-
-    quadratic_costs = np.dot(trajectory, quadratic_part)
-    # ref: https://stackoverflow.com/questions/14758283/is-there-a-numpy-scipy-
-    # dot-product-calculating-only-the-diagonal-entries-of-the
-    quadratic_costs = (quadratic_costs * trajectory).sum(-1)
-    quadratic_costs = quadratic_costs
-
-    print(linear_costs)
-
-    return constant_costs + linear_costs + quadratic_costs
-
+        return constant_costs + linear_costs + quadratic_costs
 
 def compute_cost(trajectory, quadratic_model):
     """
@@ -111,7 +118,12 @@ def compute_cost(trajectory, quadratic_model):
         - trajectory_cost: float
             The total cost of the trajectory
     """
-    cost_by_time = compute_cost_by_time(trajectory, quadratic_model)
+    if isinstance(quadratic_model, str):
+        cost_by_time = predict_cost_by_time(trajectory,
+                                            quadratic_model)
+    else:
+        cost_by_time = compute_cost_by_time(trajectory,
+                                            quadratic_model)
     return np.sum(cost_by_time)
 
 
@@ -198,17 +210,8 @@ def compute_trajectories_cost(trajectories, quadratic_model):
     """
     # If pickle model, compute w, q using model_to_matrix()
     trajectories_cost = []
-    if isinstance(quadratic_model, str):
-        # Compute cost directly from the sklearn model
-        model = load_model(quadratic_model)
-        for trajectory in trajectories:
-            trajectory_cost = np.sum(model.predict(trajectory.values))
-            trajectories_cost.append(trajectory_cost)
-    else:
-        # For each trajectory, compute total cost from the algebra formulation
-        for trajectory in trajectories:
-            trajectory_cost = compute_cost(trajectory,
-                                           quadratic_model)
-            trajectories_cost.append(trajectory_cost)
+    for trajectory in trajectories:
+        trajectory_cost = compute_cost(trajectory, quadratic_model)
+        trajectories_cost.append(trajectory_cost)
     print(len(trajectories_cost))
     return np.array(trajectories_cost)
