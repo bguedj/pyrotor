@@ -26,8 +26,10 @@ def is_in_constraints(trajectory, constraints, costs_by_time):
         is_in: bool
              Wether or not it is in constraints
     """
+    trajectory_and_cost = trajectory
+    trajectory_and_cost["cost"] = costs_by_time
     for constraint in constraints:
-        evaluation = constraint(trajectory, costs_by_time)
+        evaluation = constraint(trajectory_and_cost)
         if (evaluation <= 0).any():
             return False
     return True

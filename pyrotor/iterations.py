@@ -135,18 +135,15 @@ def binary_search_best_trajectory(trajectory, i, step, verbose):
         - step: int
             size of the current split
     """
-    print(i)
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1
 
     if i < 0:
-        print("Oink")
         raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
 
     trajectory.kappa = trajectory.kappas[i]
-    print(trajectory.kappa)
     trajectory.compute_one_iteration()
-    log("Trajectory cost: {}".format(trajectory.trajectory_cost), verbose)
+    log("Trajectory cost: {}".format(trajectory.cost), verbose)
 
     step = step//2
     if not trajectory.is_valid:

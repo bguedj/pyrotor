@@ -102,6 +102,7 @@ def compute_cost_by_time(trajectory, quadratic_model):
 
         return constant_costs + linear_costs + quadratic_costs
 
+
 def compute_cost(trajectory, quadratic_model):
     """
     Compute the cost of a trajectory given the quadratic model of the user.
@@ -213,5 +214,4 @@ def compute_trajectories_cost(trajectories, quadratic_model):
     for trajectory in trajectories:
         trajectory_cost = compute_cost(trajectory, quadratic_model)
         trajectories_cost.append(trajectory_cost)
-    print(len(trajectories_cost))
     return np.array(trajectories_cost)

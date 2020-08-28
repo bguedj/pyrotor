@@ -1,3 +1,6 @@
+
+[![](https://travis-ci.com/bguedj/pyrotor.svg?token=mBozP3BYCpx6zxMpJQAQ&branch=master)](https://travis-ci.com/github/bguedj/pyrotor)
+
 # pyrotor
 *Trajectory optimization package based on data*
 

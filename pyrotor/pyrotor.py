@@ -128,23 +128,20 @@ class Pyrotor():
                                               self.constraints,
                                               self.cost_by_time)
         except ValueError as e:
-            print(e)
             self.is_valid = False
-            self.trajectory_cost = np.nan
+            self.cost = np.nan
 
     def compute_optimal_trajectory(self):
         """
         Compute the optimized trajectory
         """
-        print(self.kappa_min)
-        print(self.kappa_max)
         iterate_through_kappas(self, self.kappa_min, self.kappa_max,
                                self.verbose)
         # self.optimized_cost = compute_cost(self.trajectory)
 
     def compute_gains(self):
-        return self.reference_costs - self.trajectory_cost
+        return self.reference_costs - self.cost
 
     def compute_relative_gains(self):
-        gains = (self.reference_costs - self.trajectory_cost) / self.reference_costs
+        gains = (self.reference_costs - self.cost) / self.reference_costs
         return gains
