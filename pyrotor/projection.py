@@ -5,6 +5,8 @@
 Project trajectories into a discrete format
 """
 
+from multiprocessing import Pool
+
 import numpy as np
 import pandas as pd
 
@@ -42,11 +44,11 @@ def trajectory_to_coef(y, basis, basis_dimension):
                                             domain=[0, 1])
             s = pd.Series(least_square_fit.coef, name=variable)
             coef.append(s)
-
+    coef = np.array([c for series in coef for c in series.values])
     return coef
 
 
-def trajectories_to_coefs(y, basis, basis_dimension):
+def trajectories_to_coefs(trajectories, basis, basis_dimension, n_jobs):
     """
     Given trajectories, compute their associated coefficients for each variable
     with respect to a functional basis
@@ -64,14 +66,22 @@ def trajectories_to_coefs(y, basis, basis_dimension):
         - coefs: list of pd.Series
             Each element of the list contains coefficients of a trajectory
     """
-    coefs = []
-    for _, y_i in enumerate(y):
-        # Compute the coefficient of each flight
-        coef_i = trajectory_to_coef(y_i, basis, basis_dimension)
-        # Format into a numpy array
-        coef_i = np.array([c for series in coef_i for c in series.values])
-        coefs.append(coef_i)
 
+    if n_jobs is None:
+        coefs = []
+        for trajectory in trajectories:
+            # Compute the coefficient of each flight
+            coef_i = trajectory_to_coef(trajectory, basis, basis_dimension)
+            # Format into a numpy array
+            coefs.append(coef_i)
+    else:
+        # Format into iterable arguments
+        basis = [basis for trajectory in trajectories]
+        basis_dimension = [basis_dimension for trajectory in trajectories]
+        args = zip(trajectories, basis, basis_dimension)
+        # Creating a pool of workers
+        with Pool(n_jobs) as pool:
+            coefs = pool.starmap(trajectory_to_coef, args)
     return coefs
 
 

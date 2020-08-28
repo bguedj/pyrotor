@@ -20,15 +20,12 @@ def test_trajectory_to_coef():
                       "B": [-4, -1, 4, 11, 20]})
     basis_dimension = {"A": 3, "B": 2}
     basis = "legendre"
-    expected_coef_A = pd.Series([3., 2., 0.], name="A", dtype='float64')
-    expected_coef_B = pd.Series([6., 12.], name="B", dtype='float64')
+    expected_coef = np.array([3., 2., 0., 6., 12.], dtype='float64')
 
     result = trajectory_to_coef(y, basis, basis_dimension)
-    result_A = result[0]
-    result_B = result[1]
 
-    pd.testing.assert_series_equal(expected_coef_A, result_A)
-    pd.testing.assert_series_equal(expected_coef_B, result_B)
+
+    np.testing.assert_almost_equal(expected_coef, result)
 
 
 def test_trajectories_to_coefs():
@@ -39,7 +36,8 @@ def test_trajectories_to_coefs():
     expected_coefs_traj_1 = np.array([3., 2.])
     expected_coefs_traj_2 = np.array([6., 12.])
 
-    result = trajectories_to_coefs(y, basis, basis_dimension)
+    n_jobs = None
+    result = trajectories_to_coefs(y, basis, basis_dimension, n_jobs)
     result_1 = result[0]
     result_2 = result[1]
 
@@ -57,7 +55,7 @@ def test_compute_weighted_coef():
 
     expected_c_weight = np.array([-5/3, -2/3, 2/3])
 
-    np.testing.assert_almost_equal(c_weight, expected_c_weight)  
+    np.testing.assert_almost_equal(c_weight, expected_c_weight)
 
 
 def test_coef_to_trajectory():

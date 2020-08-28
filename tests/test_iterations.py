@@ -26,8 +26,10 @@ def test_get_kappa_boundaries():
     c_weight = np.array([1, 1])
     expected_kappa_min = 0
     expected_kappa_max = 0.4
+    opti_factor = 2
     kappa_min, kappa_max = get_kappa_boundaries(x, Q, W,
-                                                sigma_inverse, c_weight)
+                                                sigma_inverse, c_weight,
+                                                opti_factor)
     assert kappa_min == expected_kappa_min
     assert kappa_max == expected_kappa_max
 
@@ -42,7 +44,8 @@ def test_compute_kappa_min():
 def test_compute_kappa_max():
     kappa_mean = 1
     expected_kappa_min = 2
-    kappa_min = compute_kappa_max(kappa_mean)
+    opti_factor = 2
+    kappa_min = compute_kappa_max(kappa_mean, opti_factor)
     assert kappa_min == expected_kappa_min
 
 
