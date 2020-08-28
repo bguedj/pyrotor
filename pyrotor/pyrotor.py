@@ -48,6 +48,7 @@ class Pyrotor():
                  independent_variable,
                  n_best_trajectory_to_use=10,
                  opti_factor=2,
+                 n_jobs=None,
                  verbose=True):
         """
         Create a new Pyrotor optimization
@@ -64,6 +65,7 @@ class Pyrotor():
         self.basis_dimension = basis_dimension
         self.n_best_trajectory_to_use = n_best_trajectory_to_use
         self.opti_factor = opti_factor
+        self.n_jobs = n_jobs
         self.verbose = verbose
 
         self.initialize_ref_coefficients()
@@ -103,7 +105,8 @@ class Pyrotor():
     def initialize_ref_coefficients(self):
         self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
                                                       self.basis,
-                                                      self.basis_dimension)
+                                                      self.basis_dimension,
+                                                      self.n_jobs)
 
     def compute_one_iteration(self):
         """
