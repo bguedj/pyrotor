@@ -47,12 +47,14 @@ class Pyrotor():
                  basis_dimension,
                  independent_variable,
                  n_best_trajectory_to_use=10,
-                 kappa_max=2,
+                 opti_factor=2,
                  verbose=True):
         """
         Create a new Pyrotor optimization
 
         Inputs:
+            - opti_factor: float
+                Optimisation factor: How far you want to optimize
         """
         self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories
@@ -61,6 +63,7 @@ class Pyrotor():
         self.basis = basis
         self.basis_dimension = basis_dimension
         self.n_best_trajectory_to_use = n_best_trajectory_to_use
+        self.opti_factor = opti_factor
         self.verbose = verbose
 
         self.initialize_ref_coefficients()
@@ -77,9 +80,6 @@ class Pyrotor():
         # self.v_kernel = compute_intersection_kernels()
         # add_linear_conditions(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
-        # to remove:
-        # self.linear_conditions, self.phi = get_linear_endpoints(self.basis_dimension,
-        #                                                          self.endpoints)
         self.linear_conditions, self.phi = get_linear_conditions(self.basis_dimension,
                                                                self.endpoints,
                                                                self.ref_coefficients,
@@ -96,7 +96,8 @@ class Pyrotor():
                                          self.weights,
                                          self.basis_dimension)
         self.kappa_min, self.kappa_max = get_kappa_boundaries(self.ref_coefficients, self.Q, self.W,
-                                                              self.sigma_inverse, self.c_weight)
+                                                              self.sigma_inverse, self.c_weight,
+                                                              self.opti_factor)
         self.independent_variable = independent_variable
 
     def initialize_ref_coefficients(self):

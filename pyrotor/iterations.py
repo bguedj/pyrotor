@@ -13,7 +13,7 @@ from .log import log
 
 
 def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
-                         sigma_inverse, c_weight):
+                         sigma_inverse, c_weight, opti_factor):
     """
     Give the possible minumum and maximum supposed value of kappa.
 
@@ -29,6 +29,8 @@ def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
             coefficients
         - c_weight: ndarray
             Coefficients of a weighted trajectory
+        - opti_factor: float
+            Optimisation factor: How far you want to optimize
 
     Outputs:
         - kappa_min: float
@@ -47,7 +49,7 @@ def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
     kappa_mean = compute_kappa_mean(evaluations_f, evaluations_g)
 
     kappa_min = compute_kappa_min(kappa_mean)
-    kappa_max = compute_kappa_max(kappa_mean)
+    kappa_max = compute_kappa_max(kappa_mean, opti_factor)
 
     return kappa_min, kappa_max
 
@@ -67,19 +69,21 @@ def compute_kappa_min(kappa_mean):
     return kappa_mean * 0
 
 
-def compute_kappa_max(kappa_mean):
+def compute_kappa_max(kappa_mean, opti_factor):
     """
     Compute the supposed possible maximum value of kappa
 
         Inputs:
             - kappa_mean: float
                 Mean kappa
+            - opti_factor: float
+                Optimisation factor: How far you want to optimize
 
         Output:
             - kappa_max: float
                 Supposed possible maximum value of kappa
     """
-    return 2 * kappa_mean
+    return opti_factor * kappa_mean
 
 
 def compute_kappa_mean(evaluations_f, evaluations_g):
