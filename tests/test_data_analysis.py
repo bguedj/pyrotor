@@ -5,6 +5,7 @@
 Test the basis module
 """
 import unittest
+from pytest import raises
 
 import numpy as np
 import pandas as pd
@@ -47,18 +48,22 @@ def test_compute_covariance():
     expected_precision1 = np.array([[0.01280836, -0.03140317, -0.01859481],
                                     [-0.03140317, 0.0788133, 0.04741013],
                                     [-0.01859481, 0.04741013, 0.02881532]])
-    expected_covariance2 = np.array([[1.76, -0.31, 1.43],
-                                     [-0.31, 1.84, 1.51],
-                                     [1.43, 1.51, 2.96]])
-    expected_precision2 = np.array([[16.94567835, 16.46721969, -16.58710195],
-                                    [16.46721969, 16.93711533, -16.59566497],
-                                    [-16.58710195, -16.59566497, 16.81723307]])
+    expected_covariance2 = np.array([[1.76, -0.3099437, 1.43000351],
+                                     [-0.3099437, 1.84, 1.51],
+                                     [1.43000351, 1.51, 2.96]])
+    expected_precision2 = np.array([[ 16.91494836, 16.43864249, -16.55694603],
+                                    [ 16.43864249,  16.90863849, -16.56548905],
+                                    [-16.55694603, -16.56548905,  16.7872707 ]])
 
     np.testing.assert_almost_equal(covariance1, expected_covariance1)
     np.testing.assert_almost_equal(covariance2, expected_covariance2)
     np.testing.assert_almost_equal(precision1, expected_precision1)
     np.testing.assert_almost_equal(precision2, expected_precision2)
 
+    X3 = [[k for k in range(10)], [k+1 for k in range(10)]]
+    with raises(ValueError):
+        compute_covariance(X3)
+    
 
 def test_select_trajectories():
     trajectory1 = pd.DataFrame({"A": [1, 1, 1],

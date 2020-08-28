@@ -23,7 +23,6 @@ from .cost_functions import compute_cost_by_time
 from .cost_functions import compute_trajectories_cost
 
 from .data_analysis import compute_covariance
-from .data_analysis import compute_intersection_kernels
 from .data_analysis import compute_weights
 from .data_analysis import select_trajectories
 

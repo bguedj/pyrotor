@@ -10,6 +10,8 @@ import numpy as np
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.covariance import GraphicalLasso
 
+import warnings
+
 
 def nb_samples_is_sufficient(dataset):
     """
@@ -24,7 +26,7 @@ def compute_covariance(dataset):
     """
     Estimate covariance and precision matrices from data X - Depending on
     samples number, use either EmpiricalCovariance or GraphicalLasso methods
-    from scikit-learn
+    from scikit-learn.
 
     Input:
         dataset: ndarray
@@ -36,20 +38,28 @@ def compute_covariance(dataset):
         precision: ndarray
             Estimated precision matrix (i.e. pseudo-inverse of covariance)
     """
+    # Turn matching warnings into exceptions
+    warnings.filterwarnings("error")
     if nb_samples_is_sufficient(dataset):
         cov = EmpiricalCovariance().fit(dataset)
+        covariance = cov.covariance_
+        precision = cov.precision_
+        return covariance, precision
     else:
-        cov = GraphicalLasso(mode='lars').fit(dataset)
-    covariance = cov.covariance_
-    precision = cov.precision_
-
-    # return covariance, np.diag(np.diag(precision))
-    return covariance, precision
+        try:
+            cov = GraphicalLasso(mode='cd').fit(dataset)
+            covariance = cov.covariance_
+            precision = cov.precision_
+            return covariance, precision
+        except:
+            raise ValueError('Number of reference trajectories not'
+                             'sufficiently large to estimate covariance'
+                             'and precision matrices')
 
 
 def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
     """
-    Return the trajectories associated with the smallest costs
+    Return the trajectories associated with the smallest costs.
 
     Inputs:
         - trajectories: list of pd.DataFrame
@@ -74,7 +84,7 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
 
 def compute_weights(trajectories_cost, weight_fonction=None):
     """
-    Compute normalized weights associated with each trajectory
+    Compute normalized weights associated with each trajectory.
 
     Inputs:
         - trajectories_cost: ndarray
@@ -82,6 +92,10 @@ def compute_weights(trajectories_cost, weight_fonction=None):
         - weight_fonction: function, default=None
             Function used to compute weights from the costs - Default function
             is f(x) = exp(-x)
+    
+    Output:
+        - weights: ndarray
+            Array containing normalized weights
     """
     print(trajectories_cost)
     if weight_fonction:
@@ -92,9 +106,3 @@ def compute_weights(trajectories_cost, weight_fonction=None):
     weights = weights / np.sum(weights)
 
     return weights
-
-
-def compute_intersection_kernels():
-    """
-    ompute the intersection kernel between A and B
-    """
