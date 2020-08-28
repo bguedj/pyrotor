@@ -10,8 +10,6 @@ import numpy as np
 from sklearn.covariance import EmpiricalCovariance
 from sklearn.covariance import GraphicalLasso
 
-from .objective_matrices import model_to_matrix
-
 
 def nb_samples_is_sufficient(dataset):
     """

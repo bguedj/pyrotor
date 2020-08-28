@@ -47,6 +47,7 @@ class Pyrotor():
                  basis_dimension,
                  independent_variable,
                  n_best_trajectory_to_use=10,
+                 kappa_max=2,
                  verbose=True):
         """
         Create a new Pyrotor optimization
