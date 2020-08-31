@@ -5,6 +5,7 @@
 Compute the cost of a trajectory or directly on its coefficents
 """
 
+from sklearn.pipeline import Pipeline
 import numpy as np
 import pickle
 
@@ -84,7 +85,7 @@ def compute_cost_by_time(trajectory, quadratic_model):
         - cost_by_time: ndarray
             The trajectory cost at each time point
     """
-    if isinstance(quadratic_model, str):
+    if isinstance(quadratic_model, Pipeline):
         return predict_cost_by_time(trajectory, quadratic_model)
     else:
         constant_part = quadratic_model[0]
@@ -119,7 +120,7 @@ def compute_cost(trajectory, quadratic_model):
         - trajectory_cost: float
             The total cost of the trajectory
     """
-    if isinstance(quadratic_model, str):
+    if isinstance(quadratic_model, Pipeline):
         cost_by_time = predict_cost_by_time(trajectory,
                                             quadratic_model)
     else:

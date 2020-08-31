@@ -8,11 +8,13 @@ Compute matrices appearing in the cost function
 import pickle
 
 import numpy as np
-
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LinearRegression
 from .basis import compute_legendre_features
 
 
-def model_to_matrix(path, basis_dimension):
+def model_to_matrix(model, basis_dimension):
     """
     From a quadratic model f(x), compute q and w such that
     f(x) = <x, qx> + <w, x> + r
@@ -21,8 +23,8 @@ def model_to_matrix(path, basis_dimension):
     scikit-learn
 
     Inputs:
-        - path: string
-            Path to the folder containing the pickle model
+        - model: sklearn.pipeline.Pipeline
+            Quadratic model
         - basis_dimension: dict
             Give the number of basis functions for each variable
 
@@ -34,9 +36,7 @@ def model_to_matrix(path, basis_dimension):
     """
     # Compute number of variables
     n_var = len(basis_dimension)
-    # Load model
-    with open(path, 'rb') as file:
-        model = pickle.load(file)
+
     # FIXME: do not use "named_steps" for compatibility concerns
     # Get coefficients of the model (from make_pipeline of sklearn)
     coef = np.array(model.named_steps['lin_regr'].coef_)
@@ -139,7 +139,7 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
     if basis == 'legendre':
         mean, dot_product = compute_legendre_features(basis_dimension)
     # If pickle model, compute w, q using model_to_matrix()
-    if isinstance(quad_model, str):
+    if isinstance(quad_model, Pipeline):
         # Compute w, q associated with the quadratic model
         w, q = model_to_matrix(quad_model, basis_dimension)
     # Else extract w, q from quad_model
