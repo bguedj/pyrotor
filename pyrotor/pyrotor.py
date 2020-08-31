@@ -76,7 +76,7 @@ class Pyrotor():
                                           self.basis_dimension,
                                           self.quadratic_model)
         # Get or compute the variance-covariance and precision matrices
-        if sigma:
+        if sigma is not None:
             self.sigma = sigma
             self.sigma_inverse = np.linalg.pinv(self.sigma, hermitian=True)
         else:
@@ -139,6 +139,7 @@ class Pyrotor():
         except ValueError as e:
             self.is_valid = False
             self.cost = np.nan
+            self.cost_by_time = np.array([])
 
     def compute_optimal_trajectory(self):
         """

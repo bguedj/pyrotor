@@ -42,7 +42,7 @@ def model_to_matrix(model, basis_dimension):
     coef = np.array(model.named_steps['lin_regr'].coef_)
     # Remove normalization from StandardScaler()
     std_ = np.sqrt(model.named_steps['scale'].var_)
-    coef /= std_
+    coef[1:] /= std_[1:]
     # Define w
     w = coef[1:n_var+1]
     # Define q starting by the upper part and deduce then the lower one
