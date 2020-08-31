@@ -63,8 +63,7 @@ def predict_cost_by_time(trajectory, quadratic_model):
 
     """
     # Compute cost directly from the sklearn model
-    model = load_model(quadratic_model)
-    cost_by_time = model.predict(trajectory.values)
+    cost_by_time = quadratic_model.predict(trajectory.values)
     return cost_by_time
 
 

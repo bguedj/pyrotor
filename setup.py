@@ -17,10 +17,10 @@ setup(name='pyrotor',
       url="https://github.com/bguedj/pyrotor",
       license="MIT",
       install_requires=["cvxopt>=1.2.4",
-                        "numpy>=1.17.4",
+                        "numpy>=1.19.1",
                         "pandas>=0.25.3",
-                        "scipy>=1.3.1",
+                        "scipy>=1.5.2",
                         "mock>=3.0.5",
                         "pytest>=5.3.1",
                         "pickleshare>=0.7.5",
-                        "scikit-learn>=0.22"])
+                        "scikit-learn>=0.23"])
