@@ -47,6 +47,7 @@ class Pyrotor():
                  independent_variable,
                  n_best_trajectory_to_use=10,
                  opti_factor=2,
+                 sigma=None,
                  n_jobs=None,
                  verbose=True):
         """
@@ -74,8 +75,12 @@ class Pyrotor():
         self.W, self.Q = compute_objective_matrices(self.basis,
                                           self.basis_dimension,
                                           self.quadratic_model)
-        # Compute the pseudo-inverse of variance-covariance matrix
-        self.sigma, self.sigma_inverse = compute_covariance(self.ref_coefficients)
+        # Get or compute the variance-covariance and precision matrices
+        if sigma:
+            self.sigma = sigma
+            self.sigma_inverse = np.linalg.pinv(self.sigma, hermitian=True)
+        else:
+            self.sigma, self.sigma_inverse = compute_covariance(self.ref_coefficients)
 
         # Compute intersection between ker phi.T*phi and ker sigma
         # self.v_kernel = compute_intersection_kernels()
