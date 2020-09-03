@@ -126,7 +126,7 @@ def iterate_through_kappas(trajectory, kappa_min, kappa_max, verbose):
                                   len(trajectory.kappas)-1,
                                   verbose)
     if not trajectory.is_valid:
-        raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
+        raise ValueError("Trajectories of reference too close to the constraints:\nAborted")
 
 
 def binary_search_best_trajectory(trajectory, i, step, verbose):
@@ -143,7 +143,7 @@ def binary_search_best_trajectory(trajectory, i, step, verbose):
     trajectory.i_binary_search += 1
 
     if i < 0:
-        raise ValueError("Trajectories of reference too close to your constraints:\nAborted")
+        raise ValueError("Trajectories of reference too close to the constraints:\nAborted")
 
     trajectory.kappa = trajectory.kappas[i]
     trajectory.compute_one_iteration()
@@ -157,8 +157,8 @@ def binary_search_best_trajectory(trajectory, i, step, verbose):
         binary_search_best_trajectory(trajectory, i-step, step, verbose)
     else:
         if len(trajectory.kappas)-1 != i and step != 0:
-            log('The trajectory found satisfy the constraints. Continue', verbose)
+            log('The trajectory found satisfies the constraints. Continue', verbose)
             binary_search_best_trajectory(trajectory, i+step, step, verbose)
         else:
-            log('The trajectory found satisfy the constraints.', verbose)
+            log('The trajectory found satisfies the constraints.', verbose)
             log('Optimal solution found. Finishing...', verbose)

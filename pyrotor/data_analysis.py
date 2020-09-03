@@ -51,9 +51,9 @@ def compute_covariance(dataset):
             covariance = cov.covariance_
             precision = cov.precision_
             return covariance, precision
-        except Exception:
-            raise ValueError('Number of reference trajectories not'
-                             'sufficiently large to estimate covariance'
+        except:
+            raise ValueError('Number of reference trajectories not '
+                             'sufficiently large to estimate covariance '
                              'and precision matrices')
 
 
