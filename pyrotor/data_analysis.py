@@ -51,7 +51,7 @@ def compute_covariance(dataset):
             covariance = cov.covariance_
             precision = cov.precision_
             return covariance, precision
-        except:
+        except Exception:
             raise ValueError('Number of reference trajectories not'
                              'sufficiently large to estimate covariance'
                              'and precision matrices')
@@ -92,12 +92,11 @@ def compute_weights(trajectories_cost, weight_fonction=None):
         - weight_fonction: function, default=None
             Function used to compute weights from the costs - Default function
             is f(x) = exp(-x)
-    
+
     Output:
         - weights: ndarray
             Array containing normalized weights
     """
-    print(trajectories_cost)
     if weight_fonction:
         weights = weight_fonction(trajectories_cost)
     else:

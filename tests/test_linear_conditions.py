@@ -19,8 +19,8 @@ def test_get_endpoints_matrix():
     assert (expected == endpoints_matrix).all()
 
     basis_dimension = {"A": 3, "B": 2}
-    endpoints = {'A': {'start': 1, 'end': 2, 'delta': 1},
-                 'B': {'start': 5, 'end': 7, 'delta': 2}}
+    endpoints = {'B': {'start': 5, 'end': 7, 'delta': 2},
+                 'A': {'start': 1, 'end': 2, 'delta': 1}}
     expected = np.array([[1., -1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1., -1.],
                          [1.,  1.,  1.,  0.,  0.],
@@ -76,12 +76,22 @@ def test_get_implicit_bounds():
 
 
 def test_get_endpoints_bounds():
-    endpoints = {'A': {'start': 1, 'end': 2, 'delta': 1},
-                 'B': {'start': 5, 'end': 7, 'delta': 2}}
+    variables = ['A', 'B']
+    endpoints = {'B': {'start': 5, 'end': 7, 'delta': 2},
+                 'A': {'start': 1, 'end': 2, 'delta': 1}}
 
-    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints)
+    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, variables)
     expected_left_endpoints = [0, 3, 1, 5]
     expected_right_endpoints = [2, 7, 3, 9]
+
+    assert left_endpoints == expected_left_endpoints
+    assert right_endpoints == expected_right_endpoints
+
+    variables = ['A', 'B']
+    endpoints = {'B': {'start': 5, 'end': 7, 'delta': 2}}
+    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, variables)
+    expected_left_endpoints = [3, 5]
+    expected_right_endpoints = [7, 9]
 
     assert left_endpoints == expected_left_endpoints
     assert right_endpoints == expected_right_endpoints
@@ -89,8 +99,8 @@ def test_get_endpoints_bounds():
 
 def test_get_linear_conditions():
     basis_dimensions = {"A": 3, "B": 3}
-    endpoints = {'A': {'start': 1, 'end': 2, 'delta': 1},
-                 'B': {'start': 5, 'end': 7, 'delta': 2}}
+    endpoints = {'B': {'start': 5, 'end': 7, 'delta': 2},
+                 'A': {'start': 1, 'end': 2, 'delta': 1}}
     coef1 = np.array([1., 2., 3., 4., 5., 6.])
     coef2 = np.array([2., 3., 4., 5., 6., 7.])
     coef3 = np.array([0., 1., 2., 3., 4., 5.])

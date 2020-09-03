@@ -38,7 +38,8 @@ def get_linear_conditions(basis_dimensions, endpoints, coefficients,
     """
     # Get matrix and bounds coming from endpoints conditions
     phi = get_endpoints_matrix(basis_dimensions, endpoints)
-    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints)
+    variables = basis_dimensions.keys()
+    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, variables)
     # Compute intersection between null space of sigma and phiT phi
     null_space_sigma_phi = get_implicit_matrix(sigma, phi)
     # If intersection is not 0, add implicit conditions
@@ -175,7 +176,7 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
     return phi
 
 
-def get_endpoints_bounds(endpoints):
+def get_endpoints_bounds(endpoints, variables):
     """
     Compute right-hand side for a linear condition associated with endpoints
     conditions and involved in the optimization problem.
@@ -184,6 +185,8 @@ def get_endpoints_bounds(endpoints):
         - endpoints: dict
             Initial and final states that the optimized trajectory must follow
             ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
+        - variables: iterable
+            Variable names
 
     Outputs:
         - left_endpoints: list
@@ -194,21 +197,25 @@ def get_endpoints_bounds(endpoints):
     # Define lower endpoints at 0
     left_endpoints_0 = [endpoints[variable]['start']
                         - endpoints[variable]['delta']
-                        for variable in endpoints]
+                        for variable in variables
+                        if variable in endpoints.keys()]
     # Define lower endpoints at T
     left_endpoints_t = [endpoints[variable]['end']
                         - endpoints[variable]['delta']
-                        for variable in endpoints]
+                        for variable in variables
+                        if variable in endpoints.keys()]
     # Merge to obtain lower endpoints
     left_endpoints = left_endpoints_0 + left_endpoints_t
     # Define upper endpoints at 0
     right_endpoints_0 = [endpoints[variable]['start']
                          + endpoints[variable]['delta']
-                         for variable in endpoints]
+                         for variable in variables
+                         if variable in endpoints.keys()]
     # Define upper endpoints at T
     right_endpoints_t = [endpoints[variable]['end']
                          + endpoints[variable]['delta']
-                         for variable in endpoints]
+                         for variable in variables
+                         if variable in endpoints.keys()]
     # Merge to obtain upper endpoints
     right_endpoints = right_endpoints_0 + right_endpoints_t
 
