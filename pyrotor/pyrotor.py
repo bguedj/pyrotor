@@ -153,5 +153,5 @@ class Pyrotor():
         return self.reference_costs - self.cost
 
     def compute_relative_gains(self):
-        gains = (self.reference_costs - self.cost) / self.reference_costs
+        gains = (self.reference_costs - self.cost) / np.abs(self.reference_costs)
         return gains
