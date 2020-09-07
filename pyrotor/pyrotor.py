@@ -1,10 +1,6 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-"""
-Class for trajectory optimization
-"""
-
 import numpy as np
 import pandas as pd
 
@@ -34,7 +30,7 @@ from .optimization import compute_optimized_coefficients
 
 class Pyrotor():
     """
-    Optimize your trajectory with Pyrotor.
+    Main interface to pyrotor, an optimization package based on data.
     """
 
     def __init__(self,
@@ -54,6 +50,9 @@ class Pyrotor():
         Create a new Pyrotor optimization
 
         Inputs:
+            - quadratic_model: tuple or list, it can be a sklearn Pipeline
+                Your quadratic model. See example in documentation for more
+                details.
             - opti_factor: float
                 Optimisation factor: How far you want to optimize
         """

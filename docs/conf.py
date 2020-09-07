@@ -58,7 +58,10 @@ html_static_path = ['_static']
 
 source_suffix = {
     '.md': 'markdown',
+    '.rst': 'restructuredtext'
 }
+
+autoclass_content = 'both'
 
 import recommonmark
 from recommonmark.transform import AutoStructify
