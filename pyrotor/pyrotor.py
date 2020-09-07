@@ -62,11 +62,15 @@ class Pyrotor():
         self.constraints = constraints
         self.basis = basis
         self.basis_dimension = basis_dimension
-        self.opti_factor = opti_factor
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-        self.initialize_ref_coefficients()
+
+        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+                                                      self.basis,
+                                                      self.basis_dimension,
+                                                      self.n_jobs)
+
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
         # Compute matrices involved on the final cost function
@@ -91,7 +95,11 @@ class Pyrotor():
         self.reference_trajectories = select_trajectories(self.reference_trajectories,
                                                           self.reference_costs,
                                                           n_best_trajectory_to_use)
-        self.initialize_ref_coefficients()
+        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+                                                      self.basis,
+                                                      self.basis_dimension,
+                                                      self.n_jobs)
+
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
 
@@ -101,14 +109,8 @@ class Pyrotor():
                                          self.basis_dimension)
         self.kappa_min, self.kappa_max = get_kappa_boundaries(self.ref_coefficients, self.Q, self.W,
                                                               self.sigma_inverse, self.c_weight,
-                                                              self.opti_factor)
+                                                              opti_factor)
         self.independent_variable = independent_variable
-
-    def initialize_ref_coefficients(self):
-        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
-                                                      self.basis,
-                                                      self.basis_dimension,
-                                                      self.n_jobs)
 
     def compute_one_iteration(self):
         """
