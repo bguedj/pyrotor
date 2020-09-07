@@ -65,8 +65,7 @@ class Pyrotor():
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-
-        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+        ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
                                                       self.basis,
                                                       self.basis_dimension,
                                                       self.n_jobs)
@@ -82,20 +81,17 @@ class Pyrotor():
             self.sigma = sigma
             self.sigma_inverse = np.linalg.pinv(self.sigma, hermitian=True)
         else:
-            self.sigma, self.sigma_inverse = compute_covariance(self.ref_coefficients)
+            self.sigma, self.sigma_inverse = compute_covariance(ref_coefficients)
 
-        # Compute intersection between ker phi.T*phi and ker sigma
-        # self.v_kernel = compute_intersection_kernels()
-        # add_linear_conditions(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
         self.linear_conditions, self.phi = get_linear_conditions(self.basis_dimension,
                                                                  endpoints,
-                                                                 self.ref_coefficients,
+                                                                 ref_coefficients,
                                                                  self.sigma)
         self.reference_trajectories = select_trajectories(self.reference_trajectories,
                                                           self.reference_costs,
                                                           n_best_trajectory_to_use)
-        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+        ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
                                                       self.basis,
                                                       self.basis_dimension,
                                                       self.n_jobs)
@@ -104,10 +100,10 @@ class Pyrotor():
                                                          self.quadratic_model)
 
         self.weights = compute_weights(self.reference_costs)
-        self.c_weight = compute_weighted_coef(self.ref_coefficients,
+        self.c_weight = compute_weighted_coef(ref_coefficients,
                                          self.weights,
                                          self.basis_dimension)
-        self.kappa_min, self.kappa_max = get_kappa_boundaries(self.ref_coefficients, self.Q, self.W,
+        self.kappa_min, self.kappa_max = get_kappa_boundaries(ref_coefficients, self.Q, self.W,
                                                               self.sigma_inverse, self.c_weight,
                                                               opti_factor)
         self.independent_variable = independent_variable
