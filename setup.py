@@ -23,4 +23,4 @@ setup(name='pyrotor',
                         "mock>=3.0.5",
                         "pytest>=5.3.1",
                         "pickleshare>=0.7.5",
-                        "scikit-learn>=0.23"])
+                        "scikit-learn>=0.23.2"])

@@ -53,7 +53,7 @@ def compute_covariance(dataset):
             return covariance, precision
         except Exception as e:
             lasso_error = str(e)
-            raise ValueError(lasso_error + 'Number of reference trajectories'
+            raise ValueError(lasso_error + '\nNumber of reference trajectories'
                              'not sufficiently large to estimate covariance '
                              'and precision matrices')
 
