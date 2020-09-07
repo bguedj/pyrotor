@@ -59,11 +59,9 @@ class Pyrotor():
         print("bug?")
         self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories
-        self.endpoints = endpoints
         self.constraints = constraints
         self.basis = basis
         self.basis_dimension = basis_dimension
-        self.n_best_trajectory_to_use = n_best_trajectory_to_use
         self.opti_factor = opti_factor
         self.n_jobs = n_jobs
         self.verbose = verbose
@@ -87,12 +85,12 @@ class Pyrotor():
         # add_linear_conditions(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
         self.linear_conditions, self.phi = get_linear_conditions(self.basis_dimension,
-                                                               self.endpoints,
-                                                               self.ref_coefficients,
-                                                               self.sigma)
+                                                                 endpoints,
+                                                                 self.ref_coefficients,
+                                                                 self.sigma)
         self.reference_trajectories = select_trajectories(self.reference_trajectories,
                                                           self.reference_costs,
-                                                          self.n_best_trajectory_to_use)
+                                                          n_best_trajectory_to_use)
         self.initialize_ref_coefficients()
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
