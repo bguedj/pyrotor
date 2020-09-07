@@ -1,10 +1,6 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-"""
-Class for trajectory optimization
-"""
-
 import numpy as np
 import pandas as pd
 
@@ -34,7 +30,7 @@ from .optimization import compute_optimized_coefficients
 
 class Pyrotor():
     """
-    Optimize your trajectory with Pyrotor.
+    Main interface to pyrotor, an optimization package based on data.
     """
 
     def __init__(self,
@@ -54,21 +50,26 @@ class Pyrotor():
         Create a new Pyrotor optimization
 
         Inputs:
+            - quadratic_model: tuple or list, it can be a sklearn Pipeline
+                Your quadratic model. See example in documentation for more
+                details.
             - opti_factor: float
                 Optimisation factor: How far you want to optimize
         """
+        print("bug?")
         self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories
-        self.endpoints = endpoints
         self.constraints = constraints
         self.basis = basis
         self.basis_dimension = basis_dimension
-        self.n_best_trajectory_to_use = n_best_trajectory_to_use
-        self.opti_factor = opti_factor
         self.n_jobs = n_jobs
         self.verbose = verbose
 
-        self.initialize_ref_coefficients()
+        ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+                                                      self.basis,
+                                                      self.basis_dimension,
+                                                      self.n_jobs)
+
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
         # Compute matrices involved on the final cost function
@@ -80,37 +81,32 @@ class Pyrotor():
             self.sigma = sigma
             self.sigma_inverse = np.linalg.pinv(self.sigma, hermitian=True)
         else:
-            self.sigma, self.sigma_inverse = compute_covariance(self.ref_coefficients)
+            self.sigma, self.sigma_inverse = compute_covariance(ref_coefficients)
 
-        # Compute intersection between ker phi.T*phi and ker sigma
-        # self.v_kernel = compute_intersection_kernels()
-        # add_linear_conditions(v_kernel, self.ref_coefficients)
         # Init endpoints constraints
         self.linear_conditions, self.phi = get_linear_conditions(self.basis_dimension,
-                                                               self.endpoints,
-                                                               self.ref_coefficients,
-                                                               self.sigma)
+                                                                 endpoints,
+                                                                 ref_coefficients,
+                                                                 self.sigma)
         self.reference_trajectories = select_trajectories(self.reference_trajectories,
                                                           self.reference_costs,
-                                                          self.n_best_trajectory_to_use)
-        self.initialize_ref_coefficients()
+                                                          n_best_trajectory_to_use)
+        ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
+                                                      self.basis,
+                                                      self.basis_dimension,
+                                                      self.n_jobs)
+
         self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
 
         self.weights = compute_weights(self.reference_costs)
-        self.c_weight = compute_weighted_coef(self.ref_coefficients,
+        self.c_weight = compute_weighted_coef(ref_coefficients,
                                          self.weights,
                                          self.basis_dimension)
-        self.kappa_min, self.kappa_max = get_kappa_boundaries(self.ref_coefficients, self.Q, self.W,
+        self.kappa_min, self.kappa_max = get_kappa_boundaries(ref_coefficients, self.Q, self.W,
                                                               self.sigma_inverse, self.c_weight,
-                                                              self.opti_factor)
+                                                              opti_factor)
         self.independent_variable = independent_variable
-
-    def initialize_ref_coefficients(self):
-        self.ref_coefficients = trajectories_to_coefs(self.reference_trajectories,
-                                                      self.basis,
-                                                      self.basis_dimension,
-                                                      self.n_jobs)
 
     def compute_one_iteration(self):
         """
