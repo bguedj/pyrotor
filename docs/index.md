@@ -1,5 +1,6 @@
 [//]: # (To create the doc, run the following command: make html)
 [//]: # (To write beautiful markdown: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+
 # Pyrotor
 
 Pyrotor is a Python package for trajectory optimization based on data. It provides tools to create optimized trajectories that satisfies some constraints and look real.
@@ -17,7 +18,7 @@ Pyrotor is a Python package for trajectory optimization based on data. It provid
 * [constraints](constraints.md)
 * [cost_functions](cost_functions.md)
 * [data_analysis](data_analysis.md)
-* [datasets.py](datasets.md)
+* [datasets](datasets.md)
 * [iterations](iterations.md)
 * [linear_conditions](linear_conditions.md)
 * [log](log.md)
