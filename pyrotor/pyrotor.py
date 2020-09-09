@@ -56,7 +56,6 @@ class Pyrotor():
             - opti_factor: float
                 Optimisation factor: How far you want to optimize
         """
-        print("bug?")
         self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories
         self.constraints = constraints
