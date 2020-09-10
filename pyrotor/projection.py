@@ -137,9 +137,10 @@ def coef_to_trajectory(c, evaluation_points_nb, basis, basis_dimension):
     n_var = len(basis_dimension)
     if len(c) != n_var:
         c_formatted = []
+        l = 0
         for variable in basis_dimension:
-            c_ = pd.Series(c[:basis_dimension[variable]], name=variable)
-            del c[:basis_dimension[variable]]
+            c_ = pd.Series(c[l:l+basis_dimension[variable]], name=variable)
+            l += basis_dimension[variable]
             c_formatted.append(c_)
         c = c_formatted.copy()
     y = pd.DataFrame()
