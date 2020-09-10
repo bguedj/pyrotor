@@ -11,7 +11,8 @@ setup(name='pyrotor',
       long_description=README,
       packages=['pyrotor'],
       package_data={
-          "pyrotor": ["toy_dataset/*.csv"]
+          "pyrotor": ["toy_dataset/example_1/*.csv",
+                      "toy_dataset/example_2/*.csv"]
       },
       author_email="arthur.talpaert@isen.yncrea.fr",
       url="https://github.com/bguedj/pyrotor",
@@ -23,4 +24,7 @@ setup(name='pyrotor',
                         "mock==3.0.5",
                         "pytest==5.3.1",
                         "pickleshare==0.7.5",
-                        "scikit-learn==0.23.2"])
+                        "scikit-learn==0.23.2",
+                        "sphinx==2.3.1",
+                        "recommonmark==0.6.0",
+                        "sphinx-rtd-theme==0.5.0"])
