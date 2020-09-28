@@ -15,7 +15,7 @@ import warnings
 
 def nb_samples_is_sufficient(dataset):
     """
-    Tell wether or not you have enough samples in your data set.
+    Tell wether or not you have enough samples in the data set
     """
     if np.shape(dataset)[0] > 2 * np.shape(dataset)[1]:
         return True
@@ -26,7 +26,7 @@ def compute_covariance(dataset):
     """
     Estimate covariance and precision matrices from data X - Depending on
     samples number, use either EmpiricalCovariance or GraphicalLasso methods
-    from scikit-learn.
+    from scikit-learn
 
     Input:
         dataset: ndarray
@@ -60,7 +60,7 @@ def compute_covariance(dataset):
 
 def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
     """
-    Return the trajectories associated with the smallest costs.
+    Return the trajectories associated with the smallest costs
 
     Inputs:
         - trajectories: list of pd.DataFrame
@@ -85,7 +85,7 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
 
 def compute_weights(trajectories_cost, weight_fonction=None):
     """
-    Compute normalized weights associated with each trajectory.
+    Compute normalized weights associated with each trajectory
 
     Inputs:
         - trajectories_cost: ndarray
@@ -106,3 +106,35 @@ def compute_weights(trajectories_cost, weight_fonction=None):
     weights = weights / np.sum(weights)
 
     return weights
+
+
+def add_derivatives(reference_trajectories, basis_dimension):
+    """
+    Compute derivatives of each state from a dataframe and append derivatives
+    to initial dataframe
+
+    Inputs:
+        - reference_trajectories: list of DataFrame
+            List of reference trajectories
+        - basis_dimension: dict
+            Give the number of basis functions for each state
+    Output:
+        reference_trajectories_deriv: list of DataFrame
+            List of reference trajectories with derivatives
+    """
+    # Create list of reference trajectories
+    reference_trajectories_deriv = []
+    for traj in reference_trajectories:
+        traj_deriv = traj.copy(deep=True)
+        # For each state, compute derivative
+        for state in basis_dimension.keys():
+            deriv_state = state + '_deriv'
+            state_values = traj[state].values
+            # Add a final derivative computed through the two last values
+            state_fin = state_values[-2] + 2 * \
+                         (state_values[-1] - state_values[-2])
+            # Compute derivative with np.diff
+            traj_deriv[deriv_state] = np.diff(state_values, append=state_fin)
+        reference_trajectories_deriv.append(traj_deriv)
+    
+    return reference_trajectories_deriv

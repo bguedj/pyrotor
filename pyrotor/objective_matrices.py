@@ -26,7 +26,7 @@ def model_to_matrix(model, basis_dimension):
         - model: sklearn.pipeline.Pipeline
             Quadratic model
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Outputs:
         - w: ndarray
@@ -36,7 +36,6 @@ def model_to_matrix(model, basis_dimension):
     """
     # Compute number of variables
     n_var = len(basis_dimension)
-
     # FIXME: do not use "named_steps" for compatibility concerns
     # Get coefficients of the model (from make_pipeline of sklearn)
     coef = np.array(model.named_steps['lin_regr'].coef_)
@@ -61,31 +60,34 @@ def model_to_matrix(model, basis_dimension):
     return w, q
 
 
-def extend_matrix(w, q, mean, dot_product, basis_dimension):
+def extend_matrix(w, q, basis_dimension, derivative):
     """
     Extend respectively matrix and vector from a quadratic model to new matrix
-    and vector with constant blocks - Their size is given by basis_dimension
+    and vector with constant blocks - Sizes are given by basis_dimension
 
     Inputs:
         - w: ndarray
             Vector of the linear term of the quadratic model
         - q: ndarray
             Matrix of the quadratic term of the quadratic model
-        - mean: ndarray
-            Array containing the means over an interval of each element of a
-            functional basis
-        - dot_product: numpy array [d, d]
-            Matrix containing the dot products between each element of a
-            functional basis
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
+        - derivative: boolean
+            Take into account or not derivatives of states
 
     Outputs:
-        - W: ndarray
-            Extended vector from the linear term (without intercept)
-        - Q: ndarray
+        - W_: ndarray
+            Extended vector from the linear term
+        - Q_: ndarray
             Extended matrix from the quadratic term
     """
+    # If derivative, add dimensions of derivative into basis_dimension
+    if derivative:
+        basis_dim_deriv = {}
+        for state in basis_dimension.keys():
+            deriv_state = state + '_deriv'
+            basis_dim_deriv[deriv_state] = basis_dimension[state]
+        basis_dimension = {**basis_dimension, **basis_dim_deriv}
     # Compute the dimension of the problem
     d = np.sum([basis_dimension[elt] for elt in basis_dimension])
     # Extend w to a constant block vector
@@ -95,8 +97,6 @@ def extend_matrix(w, q, mean, dot_product, basis_dimension):
         for i2 in range(basis_dimension[var]):
             W_[i2 + k] += w[i1]
         k += basis_dimension[var]
-    # Multiply W_ by mean to obtain W
-    W = np.multiply(W_, mean)
     # Extend q to a constant block matrix
     Q_ = np.zeros([d, d])
     k, l = 0, 0
@@ -108,13 +108,11 @@ def extend_matrix(w, q, mean, dot_product, basis_dimension):
             l += basis_dimension[var2]
         l = 0
         k += basis_dimension[var1]
-    # Multiply Q_ by dot_product to obtain Q
-    Q = np.multiply(Q_, dot_product)
 
-    return W, Q
+    return W_, Q_
 
 
-def compute_objective_matrices(basis, basis_dimension, quad_model):
+def compute_objective_matrices(basis, basis_dimension, quad_model, derivative):
     """
     Compute the matrices and vectors from a quadratic model and involved in
     the final cost function
@@ -123,11 +121,13 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
         - basis: string
             Name of the functional basis
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
         - quad_model: str or list
             if str then it is the path to the folder containing the pickle
             model; else the first element of the list is w and the second one
             is q
+        - derivative: boolean
+            Take into account or not derivatives of states
 
     Outputs:
         - W: ndarray
@@ -137,7 +137,8 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
     """
     # Compute means and dot products depending on the basis
     if basis == 'legendre':
-        mean, dot_product = compute_legendre_features(basis_dimension)
+        mean, dot_product = compute_legendre_features(basis_dimension,
+                                                      derivative)
     # If pickle model, compute w, q using model_to_matrix()
     if isinstance(quad_model, Pipeline):
         # Compute w, q associated with the quadratic model
@@ -146,5 +147,21 @@ def compute_objective_matrices(basis, basis_dimension, quad_model):
     else:
         w, q = quad_model[1], quad_model[2]
     # Compute W, Q appearing in the final cost function
-    W, Q = extend_matrix(w, q, mean, dot_product, basis_dimension)
+    W_, Q_ = extend_matrix(w, q, basis_dimension, derivative)
+    W = np.multiply(W_, mean)
+    Q = np.multiply(Q_, dot_product)
+    # If derivative, one has to sum up blocks of W and Q to take into
+    # account derivatives of states in the cost function
+    if derivative:
+        # Compute the dimension of the problem
+        d = np.sum([basis_dimension[elt] for elt in basis_dimension])
+        W1 = W[:d]
+        W2 = W[d:]
+        Q11 = Q[:d, :d]
+        Q12 = Q[:d, d:]
+        Q21 = Q[d:, :d]
+        Q22 = Q[d:, d:]
+        W = W1 + W2
+        Q = Q11 + Q12 + Q21 + Q22
+
     return W, Q

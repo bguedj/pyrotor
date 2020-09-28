@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-Compute the cost of a trajectory or directly on its coefficents
+Compute the cost of a trajectory or directly via its coefficents
 """
 
 from sklearn.pipeline import Pipeline
@@ -12,13 +12,13 @@ import pickle
 
 def compute_f(vector_x, sigma_inverse, c_weight):
     """
-    Evaluate the coefficients of a single trajectory over g. Where g is the
+    Evaluate the coefficients of a single trajectory over g, where g is the
     function penalizing the distance between the optimized trajectory and the
-    reference trajectories.
+    reference trajectories
 
     Inputs:
         - vector_x: ndarray
-            Coefficients of a single trajectory.
+            Coefficients of a single trajectory
         - sigma_inverse: ndarray
             Pseudoinverse of the covariance matrix of the reference
             coefficients.
@@ -28,7 +28,7 @@ def compute_f(vector_x, sigma_inverse, c_weight):
     Output:
         - cost: float
             The cost of the given trajectory (by its coefficients) over the
-            cost function given by the user.
+            cost function given by the user
     """
     part_a = np.dot(np.dot(vector_x.T, sigma_inverse), vector_x)
     part_b = np.dot(sigma_inverse, c_weight).T
@@ -38,8 +38,8 @@ def compute_f(vector_x, sigma_inverse, c_weight):
 
 def compute_g(vector_x, matrix_q, vector_w):
     """
-    Evaluate the coefficients of a single trajectory over f. Where f is the
-    cost function given by the user.
+    Evaluate the coefficients of a single trajectory over f, where f is the
+    cost function given by the user
 
     Inputs:
         - vector_x: ndarray
@@ -70,8 +70,7 @@ def predict_cost_by_time(trajectory, quadratic_model):
 def compute_cost_by_time(trajectory, quadratic_model):
     """
     Compute the cost of a trajectory at every time point given the quadratic
-    model of the user.
-    It is a vectorized version.
+    model of the user - Vectorized version
 
     Inputs:
         - trajectory: DataFrame
@@ -87,12 +86,13 @@ def compute_cost_by_time(trajectory, quadratic_model):
     if isinstance(quadratic_model, Pipeline):
         return predict_cost_by_time(trajectory, quadratic_model)
     else:
+        # FIXME: verify computations
         constant_part = quadratic_model[0]
         linear_part = quadratic_model[1]
         quadratic_part = quadratic_model[2]
         trajectory = trajectory.values
         constant_costs = constant_part * np.ones(trajectory.shape[0], dtype=np.float32)
-        # to do include sampling frequency
+        # TODO: include sampling frequency ?
         linear_costs = np.sum(trajectory * linear_part, axis=1)
 
         quadratic_costs = np.dot(trajectory, quadratic_part)
@@ -105,8 +105,8 @@ def compute_cost_by_time(trajectory, quadratic_model):
 
 def compute_cost(trajectory, quadratic_model):
     """
-    Compute the cost of a trajectory given the quadratic model of the user.
-    It is a vectorized version.
+    Compute the cost of a trajectory given the quadratic model of the user -
+    Vectorized version
 
     Inputs:
         - trajectory: DataFrame
@@ -158,7 +158,7 @@ def compute_trajectories_cost(trajectories, quadratic_model):
             model; else the first element of the list is w and the second one
             is q
         - basis_dimension: dict, default=None
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Output:
         - trajectories_cost: ndarray

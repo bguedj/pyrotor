@@ -21,6 +21,7 @@ from .cost_functions import compute_trajectories_cost
 from .data_analysis import compute_covariance
 from .data_analysis import compute_weights
 from .data_analysis import select_trajectories
+from .data_analysis import add_derivatives
 
 from .iterations import get_kappa_boundaries
 from .iterations import iterate_through_kappas
@@ -30,7 +31,7 @@ from .optimization import compute_optimized_coefficients
 
 class Pyrotor():
     """
-    Main interface to pyrotor, an optimization package based on data.
+    Main interface to pyrotor, an optimization package based on data
     """
 
     def __init__(self,
@@ -44,6 +45,8 @@ class Pyrotor():
                  n_best_trajectory_to_use=10,
                  opti_factor=2,
                  sigma=None,
+                 derivative=False,
+                 use_quadratic_programming=True,
                  n_jobs=None,
                  verbose=True):
         """
@@ -61,6 +64,8 @@ class Pyrotor():
         self.constraints = constraints
         self.basis = basis
         self.basis_dimension = basis_dimension
+        self.derivative = derivative
+        self.use_quadratic_programming = use_quadratic_programming
         self.n_jobs = n_jobs
         self.verbose = verbose
 
@@ -68,13 +73,19 @@ class Pyrotor():
                                                       self.basis,
                                                       self.basis_dimension,
                                                       self.n_jobs)
-
-        self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
+        # If derivative, compute costs with derivatives
+        if self.derivative:
+            reference_trajectories_deriv = add_derivatives(self.reference_trajectories, self.basis_dimension)
+            self.reference_costs = compute_trajectories_cost(reference_trajectories_deriv,
                                                          self.quadratic_model)
+        else:
+            self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
+                                                            self.quadratic_model)
         # Compute matrices involved on the final cost function
         self.W, self.Q = compute_objective_matrices(self.basis,
-                                          self.basis_dimension,
-                                          self.quadratic_model)
+                                        self.basis_dimension,
+                                        self.quadratic_model,
+                                        self.derivative)
         # Get or compute the variance-covariance and precision matrices
         if sigma is not None:
             self.sigma = sigma
@@ -94,8 +105,12 @@ class Pyrotor():
                                                       self.basis,
                                                       self.basis_dimension,
                                                       self.n_jobs)
-
-        self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
+        if self.derivative:
+            reference_trajectories_deriv = add_derivatives(self.reference_trajectories, self.basis_dimension)
+            self.reference_costs = compute_trajectories_cost(reference_trajectories_deriv,
+                                                         self.quadratic_model)
+        else:
+            self.reference_costs = compute_trajectories_cost(self.reference_trajectories,
                                                          self.quadratic_model)
 
         self.weights = compute_weights(self.reference_costs)
@@ -118,20 +133,29 @@ class Pyrotor():
                                                    self.linear_conditions,
                                                    self.sigma_inverse,
                                                    self.c_weight,
-                                                   self.kappa)
+                                                   self.kappa,
+                                                   self.use_quadratic_programming)
             # Construction optimized trajectory from coefficients
             self.trajectory = coef_to_trajectory(c_opt,
                                                  self.independent_variable["points_nb"],
                                                  self.basis,
                                                  self.basis_dimension)
-            self.cost_by_time = compute_cost_by_time(self.trajectory,
+            if self.derivative:
+                trajectory = add_derivatives([self.trajectory], self.basis_dimension)
+                self.cost_by_time = compute_cost_by_time(trajectory[0],
                                                       self.quadratic_model)
-            self.cost = compute_cost(self.trajectory,
-                                     self.quadratic_model)
+                self.cost = compute_cost(trajectory[0],
+                                        self.quadratic_model)
+            else:
+                self.cost_by_time = compute_cost_by_time(self.trajectory,
+                                                        self.quadratic_model)
+                self.cost = compute_cost(self.trajectory,
+                                        self.quadratic_model)
             self.is_valid = is_in_constraints(self.trajectory,
-                                              self.constraints,
-                                              self.cost_by_time)
+                                            self.constraints,
+                                            self.cost_by_time)
         except ValueError as e:
+            print(e)
             self.is_valid = False
             self.cost = np.nan
             self.cost_by_time = np.array([])

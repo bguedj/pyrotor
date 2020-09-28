@@ -16,11 +16,11 @@ def get_linear_conditions(basis_dimensions, endpoints, coefficients,
                           sigma):
     """
     Return scipy object containing the linear conditions for the optimization
-    problem.
+    problem
 
     Inputs:
         - basis_dimensions: dict
-            Give the desired number of basis functions for each variable
+            Give the desired number of basis functions for each state
         - endpoints: dict
             Initial and final states that the optimized trajectory must follow
             ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
@@ -38,8 +38,8 @@ def get_linear_conditions(basis_dimensions, endpoints, coefficients,
     """
     # Get matrix and bounds coming from endpoints conditions
     phi = get_endpoints_matrix(basis_dimensions, endpoints)
-    variables = basis_dimensions.keys()
-    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, variables)
+    states = basis_dimensions.keys()
+    left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, states)
     # Compute intersection between null space of sigma and phiT phi
     null_space_sigma_phi = get_implicit_matrix(sigma, phi)
     # If intersection is not 0, add implicit conditions
@@ -69,7 +69,7 @@ def get_implicit_matrix(sigma, phi):
     """
     Compute an orthonormal basis spanning the intersection between null space
     of sigma and phiT phi - Return a matrix whose columns provide the basis
-    and which is involved in implicit conditions in the optimization problem.
+    and which is involved in implicit conditions in the optimization problem
 
     Inputs:
         sigma: ndarray
@@ -82,21 +82,6 @@ def get_implicit_matrix(sigma, phi):
             Matrix whose columns are orthonormal vectors and spanning the
             intersection between null space of sigma and phiT phi
     """
-    # # Set arbitrarily a threshold for numerical precision
-    # threshold = 1e-6
-    # # Diagonalize sigma
-    # lambda_sigma, v_sigma = np.linalg.eigh(sigma)
-    # # Determine the dimension of ker sigma
-    # sigma_null_space_dim = np.argwhere(lambda_sigma > threshold)[0][0]
-    # # Compute PhiT phi
-    # phi_t_phi = np.dot(phi.T, phi)
-    # # Determine columns of v_sigma which are in ker sigma
-    # phi_t_phi_v = np.dot(phi_t_phi, v_sigma[:,:sigma_null_space_dim])
-    # phi_t_phi_v_norms = np.linalg.norm(phi_t_phi_v, axis=0)
-    # null_space_sigma_phi = np.array([v_sigma[:,k]
-    #                              for k in range(sigma_null_space_dim)
-    #                              if phi_t_phi_v_norms[k] < threshold]).T
-
     # Set arbitrarily a threshold for numerical precision
     threshold = 1e-10
     # Diagonalize sigma
@@ -122,7 +107,7 @@ def get_implicit_bounds(null_space_sigma_phi, coefficients):
     """
     Project coefficients mean onto the intersection of null space of sigma and
     Im PhiT Phi - Provide right-hand side for a linear condition in the
-    optimization problem.
+    optimization problem
 
     Inputs:
         null_space_sigma_phi: ndarray
@@ -147,11 +132,11 @@ def get_implicit_bounds(null_space_sigma_phi, coefficients):
 def get_endpoints_matrix(basis_dimensions, endpoints):
     """
     Compute a matrix modelling the endpoints conditions involved in the
-    optimization problem.
+    optimization problem
 
     Inputs:
         - basis_dimensions: dict
-            Give the desired number of basis functions for each variable
+            Give the desired number of basis functions for each state
 
     Output:
         - phi: ndarray
@@ -161,9 +146,9 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
     phi_height = 2 * len(endpoints)
     phi = np.zeros((phi_height, phi_width))
     i = j = 0
-    for variable in basis_dimensions:
-        if variable in endpoints:
-            for k in range(basis_dimensions[variable]):
+    for state in basis_dimensions:
+        if state in endpoints:
+            for k in range(basis_dimensions[state]):
                 basis_k = legendre.Legendre.basis(k, domain=[0, 1])
                 _, basis_k_evaluated = legendre.Legendre.linspace(basis_k,
                                                                   n=2)
@@ -172,21 +157,21 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
                 i += 1
             j += 1
         else:
-            i += basis_dimensions[variable]
+            i += basis_dimensions[state]
     return phi
 
 
-def get_endpoints_bounds(endpoints, variables):
+def get_endpoints_bounds(endpoints, states):
     """
     Compute right-hand side for a linear condition associated with endpoints
-    conditions and involved in the optimization problem.
+    conditions and involved in the optimization problem
 
     Input:
         - endpoints: dict
             Initial and final states that the optimized trajectory must follow
             ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
-        - variables: iterable
-            Variable names
+        - states: iterable
+            state names
 
     Outputs:
         - left_endpoints: list
@@ -195,27 +180,27 @@ def get_endpoints_bounds(endpoints, variables):
             List containing the upper conditions (at 0 and T) for each state
     """
     # Define lower endpoints at 0
-    left_endpoints_0 = [endpoints[variable]['start']
-                        - endpoints[variable]['delta']
-                        for variable in variables
-                        if variable in endpoints.keys()]
+    left_endpoints_0 = [endpoints[state]['start']
+                        - endpoints[state]['delta']
+                        for state in states
+                        if state in endpoints.keys()]
     # Define lower endpoints at T
-    left_endpoints_t = [endpoints[variable]['end']
-                        - endpoints[variable]['delta']
-                        for variable in variables
-                        if variable in endpoints.keys()]
+    left_endpoints_t = [endpoints[state]['end']
+                        - endpoints[state]['delta']
+                        for state in states
+                        if state in endpoints.keys()]
     # Merge to obtain lower endpoints
     left_endpoints = left_endpoints_0 + left_endpoints_t
     # Define upper endpoints at 0
-    right_endpoints_0 = [endpoints[variable]['start']
-                         + endpoints[variable]['delta']
-                         for variable in variables
-                         if variable in endpoints.keys()]
+    right_endpoints_0 = [endpoints[state]['start']
+                         + endpoints[state]['delta']
+                         for state in states
+                         if state in endpoints.keys()]
     # Define upper endpoints at T
-    right_endpoints_t = [endpoints[variable]['end']
-                         + endpoints[variable]['delta']
-                         for variable in variables
-                         if variable in endpoints.keys()]
+    right_endpoints_t = [endpoints[state]['end']
+                         + endpoints[state]['delta']
+                         for state in states
+                         if state in endpoints.keys()]
     # Merge to obtain upper endpoints
     right_endpoints = right_endpoints_0 + right_endpoints_t
 

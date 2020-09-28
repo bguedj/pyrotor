@@ -15,7 +15,7 @@ from numpy.polynomial.legendre import Legendre
 
 def trajectory_to_coef(y, basis, basis_dimension):
     """
-    Given a trajectory, compute its associated coefficients for each variable
+    Given a trajectory, compute its associated coefficients for each state
     with respect to a functional basis
 
     Inputs:
@@ -24,25 +24,25 @@ def trajectory_to_coef(y, basis, basis_dimension):
         - basis: string
             Name of the functional basis
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Output:
         - coef: list of pd.Series
-            Each element of the list contains the coefficients of a variable
+            Each element of the list contains the coefficients of a state
     """
     # Number of evaluation points
     evaluation_points_nb = y.shape[0] - 1
     coef = []
-    # Compute coefficients for each variable
-    for variable in basis_dimension:
+    # Compute coefficients for each state
+    for state in basis_dimension:
         if basis == 'legendre':
             # NB: Use Legendre class to fix the domain of the basis
             # Here consider each trajectory to be defined on [0,1]
             least_square_fit = Legendre.fit(y.index / evaluation_points_nb,
-                                            y[variable],
-                                            deg=basis_dimension[variable]-1,
+                                            y[state],
+                                            deg=basis_dimension[state]-1,
                                             domain=[0, 1])
-            s = pd.Series(least_square_fit.coef, name=variable)
+            s = pd.Series(least_square_fit.coef, name=state)
             coef.append(s)
     coef = np.array([c for series in coef for c in series.values])
     return coef
@@ -50,7 +50,7 @@ def trajectory_to_coef(y, basis, basis_dimension):
 
 def trajectories_to_coefs(trajectories, basis, basis_dimension, n_jobs):
     """
-    Given trajectories, compute their associated coefficients for each variable
+    Given trajectories, compute their associated coefficients for each state
     with respect to a functional basis
 
     Inputs:
@@ -60,7 +60,7 @@ def trajectories_to_coefs(trajectories, basis, basis_dimension, n_jobs):
         - basis: string
             Functional basis
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Output:
         - coefs: list of pd.Series
@@ -95,7 +95,7 @@ def compute_weighted_coef(coefs, weights, basis_dimension):
         - weights: ndarray
             Vector containing the weights
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Output:
         c_weight: ndarray
@@ -118,39 +118,39 @@ def coef_to_trajectory(c, evaluation_points_nb, basis, basis_dimension):
 
     Inputs:
         - c: list of floats or list of pd.Series
-            Each element of the list contains coefficients of a variable
+            Each element of the list contains coefficients of a state
         - evaluation_points_nb: int
             Number of points on which the trajectory is evaluated
         - basis: string
             Functionnal basis to project the flight on.
         - basis_dimension: dict
-            Give the number of basis functions for each variable
+            Give the number of basis functions for each state
 
     Output:
         - y: DataFrame
-            Contains computed variables of a flight
+            Contains computed states of a flight
 
     # FIXME: if below necessary ??
     """
     # If c is list of floats, convert it into a list of pd.Series
-    # Compute number of variables
+    # Compute number of states
     n_var = len(basis_dimension)
     if len(c) != n_var:
         c_formatted = []
         l = 0
-        for variable in basis_dimension:
-            c_ = pd.Series(c[l:l+basis_dimension[variable]], name=variable)
-            l += basis_dimension[variable]
+        for state in basis_dimension:
+            c_ = pd.Series(c[l:l+basis_dimension[state]], name=state)
+            l += basis_dimension[state]
             c_formatted.append(c_)
         c = c_formatted.copy()
     y = pd.DataFrame()
-    # Build each variable
+    # Build each state
     for i in range(n_var):
         if basis == 'legendre':
             # Fix the domain [0,1] of the basis
-            cl_c_variable = Legendre(c[i].values, domain=[0, 1])
+            cl_c_state = Legendre(c[i].values, domain=[0, 1])
             # Evaluate
-            _, y[c[i].name] = Legendre.linspace(cl_c_variable,
+            _, y[c[i].name] = Legendre.linspace(cl_c_state,
                                                 n=evaluation_points_nb)
 
     return y

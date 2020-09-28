@@ -9,7 +9,7 @@ Constraints verification
 
 def is_in_constraints(trajectory, constraints, costs_by_time):
     """
-    Check wether or not the trajectory is complying to each constraints.
+    Check wether or not the trajectory is complying to each constraints
 
     Inputs:
         - trajectory: pandas DataFrame

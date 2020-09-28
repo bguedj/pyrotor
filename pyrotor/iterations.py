@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-Describe the iterative process performed while optimizing trajectories.
+Describe the iterative process performed while optimizing trajectories
 """
 
 import numpy as np
@@ -15,7 +15,7 @@ from .log import log
 def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
                          sigma_inverse, c_weight, opti_factor):
     """
-    Give the possible minumum and maximum supposed value of kappa.
+    Give the possible minumum and maximum supposed value of kappa
 
     Inputs:
         - reference_coefficients: ndarray
