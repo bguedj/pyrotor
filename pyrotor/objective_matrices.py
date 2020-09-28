@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-Compute matrices appearing in the cost function
+Compute matrices involved in the cost function
 """
 
 import pickle

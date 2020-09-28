@@ -96,14 +96,16 @@ def compute_legendre_mean_derivatives(basis_dimension):
             Give the number of basis functions for each state
     
     Outputs:
-        - ndarray
+        - mean_deriv: ndarray
             Array containing the means over an interval
     """
-    # Use Legendre property: P(1) = 1, P(0)= 1 or -1
-    # Compute the dimension of the problem
-    dimension = np.sum([basis_dimension[elt] for elt in basis_dimension])
+    mean_deriv = np.array([])
+    for state in basis_dimension:
+        # Use Legendre property: P(1) = 1, P(0)= 1 or -1
+        x = [k % 2 * 2 for k in range(basis_dimension[state])]
+        mean_deriv = np.append(mean_deriv, x)
 
-    return np.array([k % 2 for k in range(dimension)]) * 2
+    return mean_deriv
 
 
 def compute_legendre_dot_product_derivatives(basis_dimension):
