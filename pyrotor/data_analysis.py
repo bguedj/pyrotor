@@ -16,6 +16,14 @@ import warnings
 def nb_samples_is_sufficient(dataset):
     """
     Tell wether or not you have enough samples in the data set
+
+    Input:
+        dataset: ndarray
+            Dataset
+
+    Output:
+        is_sufficient: boolean
+            Tell wether or not you have 2 times more features than observations
     """
     if np.shape(dataset)[0] > 2 * np.shape(dataset)[1]:
         return True
@@ -136,5 +144,5 @@ def add_derivatives(reference_trajectories, basis_dimension):
             # Compute derivative with np.diff
             traj_deriv[deriv_state] = np.diff(state_values, append=state_fin)
         reference_trajectories_deriv.append(traj_deriv)
-    
+
     return reference_trajectories_deriv

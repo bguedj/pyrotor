@@ -21,6 +21,9 @@ def is_in_constraints(trajectory, constraints, costs_by_time):
              is considered as not satisfied.
              ex: [f1, f2] and if f1(trajectory) < 0 then the
              constraint is not respected.
+        - costs_by_time: ndarray
+             Optimized trajectory cost. Useful when your constraints depends on
+             the trajectory cost.
 
     Output:
         is_in: bool

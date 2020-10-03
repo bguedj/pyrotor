@@ -55,16 +55,19 @@ def trajectories_to_coefs(trajectories, basis, basis_dimension, n_jobs):
 
     Inputs:
         - y: list of DataFrame
-            List of trajectories - Index has to start
-            at 0
+            List of trajectories - Index has to start.
+            at 0.
         - basis: string
             Functional basis
         - basis_dimension: dict
-            Give the number of basis functions for each state
+            Give the number of basis functions for each state.
+        - n_jobs: int
+            Number of processes you want to use. If None, no parallelization
+            is used.
 
     Output:
         - coefs: list of pd.Series
-            Each element of the list contains coefficients of a trajectory
+            Each element of the list contains coefficients of a trajectory.
     """
 
     if n_jobs is None:
@@ -91,15 +94,15 @@ def compute_weighted_coef(coefs, weights, basis_dimension):
 
     Inputs:
         - coefs: list of pd.Series
-            Each element of the list contains coefficients of a trajectory
+            Each element of the list contains coefficients of a trajectory.
         - weights: ndarray
-            Vector containing the weights
+            Vector containing the weights.
         - basis_dimension: dict
-            Give the number of basis functions for each state
+            Give the number of basis functions for each state.
 
     Output:
         c_weight: ndarray
-            Vector containing weighted sum of the coefficients
+            Vector containing weighted sum of the coefficients.
     """
     # Compute the dimension of the problem
     K = sum(basis_dimension.values())
@@ -118,17 +121,17 @@ def coef_to_trajectory(c, evaluation_points_nb, basis, basis_dimension):
 
     Inputs:
         - c: list of floats or list of pd.Series
-            Each element of the list contains coefficients of a state
+            Each element of the list contains coefficients of a state.
         - evaluation_points_nb: int
-            Number of points on which the trajectory is evaluated
+            Number of points on which the trajectory is evaluated.
         - basis: string
             Functionnal basis to project the flight on.
         - basis_dimension: dict
-            Give the number of basis functions for each state
+            Give the number of basis functions for each state.
 
     Output:
         - y: DataFrame
-            Contains computed states of a flight
+            Contains computed states of a flight.
 
     # FIXME: if below necessary ??
     """

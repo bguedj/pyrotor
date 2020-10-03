@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-Describe the iterative process performed while optimizing trajectories
+Describe the iterative process performed while optimizing trajectories.
 """
 
 import numpy as np
@@ -15,28 +15,28 @@ from .log import log
 def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
                          sigma_inverse, c_weight, opti_factor):
     """
-    Give the possible minumum and maximum supposed value of kappa
+    Give the possible minumum and maximum supposed value of kappa.
 
     Inputs:
         - reference_coefficients: ndarray
-            Coefficients of reference
+            Coefficients of reference.
         - vector_q: ndarray
             Matrix of the quadratic term
         - vector_w: ndarray
-            Vector of the linear term (without intercept)
+            Vector of the linear term (without intercept).
         - sigma_inverse: ndarray
             Pseudoinverse of the covariance matrix of the reference
-            coefficients
+            coefficients.
         - c_weight: ndarray
-            Coefficients of a weighted trajectory
+            Coefficients of a weighted trajectory.
         - opti_factor: float
-            Optimisation factor: How far you want to optimize
+            Optimisation factor: How far you want to optimize.
 
     Outputs:
         - kappa_min: float
-            Supposed possible minimum value of kappa
+            Supposed possible minimum value of kappa.
         - kappa_max: float
-            Supposed possible maximum value of kappa
+            Supposed possible maximum value of kappa.
 
     """
     evaluations_f = []
@@ -60,45 +60,45 @@ def compute_kappa_min(kappa_mean):
 
     Inputs:
         - kappa_mean: float
-            Mean kappa
+            Mean kappa.
 
     Output:
         - kappa_min: float
-            Supposed possible minimum value of kappa
+            Supposed possible minimum value of kappa.
     """
     return kappa_mean * 0
 
 
 def compute_kappa_max(kappa_mean, opti_factor):
     """
-    Compute the supposed possible maximum value of kappa
+    Compute the supposed possible maximum value of kappa.
 
         Inputs:
             - kappa_mean: float
-                Mean kappa
+                Mean kappa.
             - opti_factor: float
-                Optimisation factor: How far you want to optimize
+                Optimisation factor: How far you want to optimize.
 
         Output:
             - kappa_max: float
-                Supposed possible maximum value of kappa
+                Supposed possible maximum value of kappa.
     """
     return opti_factor * kappa_mean
 
 
 def compute_kappa_mean(evaluations_f, evaluations_g):
     """
-    Compute the mean kappa
+    Compute the mean kappa.
 
     Inputs:
         - evaluations_f: list
-            Evaluations of several reference coefficients over f
+            Evaluations of several reference coefficients over f.
         - evaluations_g: list
-            Evaluations of several reference coefficients over g
+            Evaluations of several reference coefficients over g.
 
     Output:
         kappa_mean: float
-            Mean kappa
+            Mean kappa.
     """
     evaluations_f = np.array(evaluations_f)
     evaluations_g = np.array(evaluations_g)
@@ -113,11 +113,14 @@ def iterate_through_kappas(trajectory, kappa_min, kappa_max, verbose):
 
     Inputs:
         - trajectory: Pyrotor instance
-            Trajectory to optimize.
+            Trajectory to optimize. The object will be directly modified by
+            reference.
         - kappa_min: float
-            Supposed minimum possible kappa
+            Supposed minimum possible kappa.
         - kappa_max: float
-            Supposed maximum possible kappa
+            Supposed maximum possible kappa.
+        - verbose: boolean
+            If you want to display the verbose or not.
     """
     trajectory.kappas = np.linspace(kappa_min, kappa_max, 100000)
     trajectory.i_binary_search = 0
@@ -131,13 +134,18 @@ def iterate_through_kappas(trajectory, kappa_min, kappa_max, verbose):
 
 def binary_search_best_trajectory(trajectory, i, step, verbose):
     """
-    Perfor a binary search amoung all the kappas to find the best trajectory
+    Perfor a binary search amoung all the kappas to find the best trajectory.
 
     Inputs:
+        - trajectory: Pyrotor instance
+            Trajectory to optimize. The object will be directly modified by
+            reference.
         - i: int
-            index of the kappa to use
+            index of the kappa to use.
         - step: int
-            size of the current split
+            size of the current split.
+        - verbose: boolean
+            If you want to display the verbose or not.
     """
     trajectory.i_kappa = i
     trajectory.i_binary_search += 1

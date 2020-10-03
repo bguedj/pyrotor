@@ -56,8 +56,37 @@ class Pyrotor():
             - quadratic_model: tuple or list, it can be a sklearn Pipeline
                 Your quadratic model. See example in documentation for more
                 details.
-            - opti_factor: float
+            - reference_trajectories: list of DataFrame
+                List of reference trajectories
+            - endpoints: dict
+                Initial and final states that the optimized trajectory must follow
+                ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
+            - constraints: list
+                 Constraints the trajectory must complain with.
+                 Each constraint is model as a function. If the funciton is
+                 negative when applied on the right variable, then the constraint
+                 is considered as not satisfied.
+                 ex: [f1, f2] and if f1(trajectory) < 0 then the
+                 constraint is not respected.
+            - basis: string
+                Name of the functional basis
+            - basis_dimension: dict
+                Give the number of basis functions for each state
+            - independent_variable
+            - n_best_trajectory_to_use: int
+                Number of trajectories to keep
+            - opti_factor: default: 2, float
                 Optimisation factor: How far you want to optimize
+            - sigma: ndarray
+                Matrix interpreted as an estimated covariance matrix
+            - derivative: boolean
+                Compute the derivative or not.
+            - use_quadratic_programming: boolean
+                Faster way to optimize, only if your problem is convex.
+            - n_jobs: int
+                Number of process to use. If None, sequential.
+            - verbose: boolean
+                Display the verbose or not.
         """
         self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories

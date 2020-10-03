@@ -72,7 +72,7 @@ def get_implicit_matrix(sigma, phi):
     and which is involved in implicit conditions in the optimization problem
 
     Inputs:
-        sigma: ndarray
+        - sigma: ndarray
             Matrix interpreted as an estimated covariance matrix
         - phi: ndarray
             Matrix modelling the endpoints conditions
@@ -137,6 +137,9 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
     Inputs:
         - basis_dimensions: dict
             Give the desired number of basis functions for each state
+        - endpoints: dict
+            Initial and final states that the optimized trajectory must follow
+            ex: {'Var 1': {'start': 109, 'end': 98, 'delta': 10}, ...}
 
     Output:
         - phi: ndarray

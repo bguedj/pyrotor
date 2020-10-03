@@ -60,7 +60,19 @@ def compute_g(vector_x, matrix_q, vector_w):
 
 def predict_cost_by_time(trajectory, quadratic_model):
     """
+    Compute the cost, for each time point of the trajectory from a quadratic
+    model.
 
+    Inputs:
+        trajectory: ndarray
+        A trajectory.
+
+        quadratic_model: sklearn.pipeline.Pipeline object
+        The quadratic model that models your trajectory costs.
+
+    Output:
+        cost_by_time: ndarray
+        The predicted cost by time of your trajectory.
     """
     # Compute cost directly from the sklearn model
     cost_by_time = quadratic_model.predict(trajectory.values)
@@ -157,8 +169,6 @@ def compute_trajectories_cost(trajectories, quadratic_model):
             if str then it is the path to the folder containing the pickle
             model; else the first element of the list is w and the second one
             is q
-        - basis_dimension: dict, default=None
-            Give the number of basis functions for each state
 
     Output:
         - trajectories_cost: ndarray
