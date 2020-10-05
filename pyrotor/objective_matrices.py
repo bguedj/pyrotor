@@ -14,7 +14,7 @@ from sklearn.linear_model import LinearRegression
 from .basis import compute_legendre_features
 
 
-def model_to_matrix(model, basis_dimension):
+def model_to_matrix(model, basis_dimension, derivative):
     """
     From a quadratic model f(x), compute q and w such that
     f(x) = <x, qx> + <w, x> + r
@@ -27,6 +27,8 @@ def model_to_matrix(model, basis_dimension):
             Quadratic model
         - basis_dimension: dict
             Give the number of basis functions for each state
+        - derivative: boolean
+            Take into account or not derivatives of states
 
     Outputs:
         - w: ndarray
@@ -34,6 +36,13 @@ def model_to_matrix(model, basis_dimension):
         - q: ndarray
             Matrix of the quadratic term
     """
+    # If derivative, add dimensions of derivative into basis_dimension
+    if derivative:
+        basis_dim_deriv = {}
+        for state in basis_dimension.keys():
+            deriv_state = state + '_deriv'
+            basis_dim_deriv[deriv_state] = basis_dimension[state]
+        basis_dimension = {**basis_dimension, **basis_dim_deriv}
     # Compute number of variables
     n_var = len(basis_dimension)
     # FIXME: do not use "named_steps" for compatibility concerns
@@ -142,7 +151,7 @@ def compute_objective_matrices(basis, basis_dimension, quad_model, derivative):
     # If pickle model, compute w, q using model_to_matrix()
     if isinstance(quad_model, Pipeline):
         # Compute w, q associated with the quadratic model
-        w, q = model_to_matrix(quad_model, basis_dimension)
+        w, q = model_to_matrix(quad_model, basis_dimension, derivative)
     # Else extract w, q from quad_model
     else:
         w, q = quad_model[1], quad_model[2]
