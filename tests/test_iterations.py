@@ -11,7 +11,6 @@ import mock
 import numpy as np
 
 from pyrotor.iterations import get_kappa_boundaries
-from pyrotor.iterations import compute_kappa_min
 from pyrotor.iterations import compute_kappa_max
 from pyrotor.iterations import compute_kappa_mean
 from pyrotor.iterations import binary_search_best_trajectory
@@ -32,13 +31,6 @@ def test_get_kappa_boundaries():
                                                 opti_factor)
     assert kappa_min == expected_kappa_min
     assert kappa_max == expected_kappa_max
-
-
-def test_compute_kappa_min():
-    kappa_mean = 1
-    expected_kappa_min = 0
-    kappa_min = compute_kappa_min(kappa_mean)
-    assert kappa_min == expected_kappa_min
 
 
 def test_compute_kappa_max():

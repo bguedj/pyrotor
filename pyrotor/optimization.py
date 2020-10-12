@@ -2,7 +2,7 @@
 # -*- coding:utf-8 -*-
 
 """
-File containing optimization solvers
+File containing optimization solvers.
 """
 
 import numpy as np
@@ -17,7 +17,7 @@ def compute_optimized_coefficients(Q, W, phi, lin_const, sigma_inverse,
                                    c_weight, kappa,
                                    use_quadratic_programming=True):
     """
-    Depending on use_quadratic_programming, decide which solver to use
+    Depending on use_quadratic_programming, decide which solver to use.
 
     Inputs:
         Q: ndarray
@@ -37,7 +37,6 @@ def compute_optimized_coefficients(Q, W, phi, lin_const, sigma_inverse,
             Optimisation hyperparameter
         use_quadratic_programming: Boolean
             Use or not quadratic programming solver
-    
     Return:
         c_opt: list of arrays
             Coefficients of the optimized trajectory
@@ -57,8 +56,9 @@ def compute_optimized_coefficients(Q, W, phi, lin_const, sigma_inverse,
 
 def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
     """
-    Minimize a quadratic function using CVXOPT library - The associated
-    matrix must be positive semidefinite
+    Minimize a quadratic function using CVXOPT library.
+
+    The associated matrix must be positive semidefinite.
 
     Inputs:
         Q: ndarray
@@ -76,7 +76,6 @@ def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
             Coefficients of a weighted trajectory
         kappa: float
             Optimisation hyperparameter
-
     Output:
         c_optimized: ndarray
             Coefficients of the optimized trajectory
@@ -94,7 +93,7 @@ def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
     lb = -np.array(lin_const.lb)
     h = np.concatenate((lin_const.ub, lb), axis=0)
     h = matrix(h, tc='d')
-    # remove output
+    # Do not display CVXOPT verbose
     solvers.options['show_progress'] = False
     # Solve using qp method
     optimize = solvers.qp(P, q, G, h)
@@ -102,11 +101,13 @@ def minimize_cvx(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa):
 
     return c_optimized
 
+
 def minimize_trust_constr(Q, W, phi, lin_const, sigma_inverse, c_weight,
                           kappa):
     """
-    Minimize a quadratic function using scipy.optimize - The associated
-    matrix is not required to be positive semidefinite
+    Minimize a quadratic function using scipy.optimize.
+
+    The associated matrix is not required to be positive semidefinite.
 
     Inputs:
         Q: ndarray
@@ -133,15 +134,17 @@ def minimize_trust_constr(Q, W, phi, lin_const, sigma_inverse, c_weight,
     P = kappa * Q + sigma_inverse
     # Define linear part
     q = kappa * W - 2 * np.dot(sigma_inverse, c_weight)
-    # Compute cost
+
+    # Compute cost together with Jacobian and Hessian
     def cost(x):
         return np.linalg.multi_dot([x.T, P, x]) + np.dot(q, x)
-    # Compute Jacobian cost
+
     def cost_jac(x):
         return 2 * np.dot(P, x) + q
-    # COmpute Hessian cost
+
     def cost_hess(x, p):
         return 2 * np.dot(P, p)
+
     # Use scipy.optimize.minimize(method='trust-constr')
     res = minimize(cost, c_weight,
                    method='trust-constr',
