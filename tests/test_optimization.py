@@ -86,4 +86,4 @@ def test_minimize_trust_constr():
 
     expected_c_optimized = np.ones(K)
 
-    np.testing.assert_almost_equal(c_optimized, expected_c_optimized)
+    np.testing.assert_almost_equal(c_optimized, expected_c_optimized, decimal=6)
