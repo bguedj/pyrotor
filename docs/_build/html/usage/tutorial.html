@@ -1,0 +1,344 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial &mdash; Pyrotor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Pyrotor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Tutorial</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrotor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/usage/tutorial.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>We create a simple problem, with trajectories in 2 dimensions, a few constraint functions and an explicit cost function.</p>
+<p>First, we need to import Pyrotor and Numpy to define our problem</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pyrotor</span>
+</pre></div>
+</div>
+<p>Import the trajectories of a toy dataset:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reference_trajectories</span> <span class="o">=</span> <span class="n">pyrotor</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">load_toy_dataset</span><span class="p">(</span><span class="s2">&quot;example_1&quot;</span><span class="p">)</span>
+<span class="c1"># take a look at the data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reference_trajectoies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Then we can define our quadratic cost function that you want to minimize
+let’s say:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quadratic part</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+              <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+<span class="c1"># Linear part</span>
+<span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+
+<span class="c1"># Constant part</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mf">2.87</span>
+
+<span class="n">quadratic_model</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Now, we can set our initial and final states of our variables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">endpoints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">111</span><span class="p">,</span>
+                    <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">912</span><span class="p">,</span>
+                    <span class="s1">&#39;delta&#39;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">},</span>
+             <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">926</span><span class="p">,</span>
+                    <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">211</span><span class="p">,</span>
+                    <span class="s1">&#39;delta&#39;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">}}</span>
+</pre></div>
+</div>
+<p>Define independent variable (time)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">independent_variable</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span>
+                        <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">9</span><span class="p">,</span>
+                        <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">01</span><span class="p">}</span>
+<span class="c1"># Compute number of evaluation points</span>
+<span class="n">delta_time</span> <span class="o">=</span> <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">]</span>
+<span class="n">delta_time</span> <span class="o">/=</span> <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span>
+<span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;points_nb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delta_time</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p>Define constraints</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># x1 &gt; 0</span>
+<span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">x1</span>
+
+<span class="c1"># x1 &lt; 1</span>
+<span class="k">def</span> <span class="nf">f2</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x1</span>
+
+<span class="c1"># x2 &gt; 0</span>
+<span class="k">def</span> <span class="nf">f3</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">x2</span>
+
+<span class="c1"># x2 &lt; 1</span>
+<span class="k">def</span> <span class="nf">f4</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">x2</span>
+
+<span class="c1"># x2 &gt; f(x1)</span>
+<span class="k">def</span> <span class="nf">f5</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x2&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+    <span class="k">return</span> <span class="n">x2</span> <span class="o">-</span> <span class="mi">150</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x1</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">225</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">100</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">79</span><span class="o">/</span><span class="mi">190</span>
+
+<span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">,</span> <span class="n">f5</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Define your functional basis. Your trajectories of the training data are
+projected in a lower dimensional space: in our case, the Legendre space.
+The variable x1 is made of basis of 4 dimensions and the variable x2 is made of
+6 dimensions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;legendre&#39;</span>
+<span class="n">basis_dimension</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                   <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Create an instance to model our problem.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mr_pyrotor</span> <span class="o">=</span> <span class="n">pyrotor</span><span class="o">.</span><span class="n">Pyrotor</span><span class="p">(</span><span class="n">quadratic_model</span><span class="p">,</span>
+                             <span class="n">reference_trajectories</span><span class="p">,</span>
+                             <span class="n">endpoints</span><span class="p">,</span>
+                             <span class="n">constraints</span><span class="p">,</span>
+                             <span class="n">basis</span><span class="p">,</span>
+                             <span class="n">basis_dimension</span><span class="p">,</span>
+                             <span class="n">independent_variable</span><span class="p">,</span>
+                             <span class="n">n_best_trajectory_to_use</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                             <span class="n">opti_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                             <span class="n">use_quadratic_programming</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Predict an optimized trajectory:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_optimal_trajectory</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Compute the savings:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_gains</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Savings&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">savings</span><span class="p">)</span>
+<span class="n">relative_savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_relative_gains</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Relative savings [%]&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">relative_savings</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>And finally plot the result:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define time axis</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span>
+                <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
+                <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;points_nb&#39;</span><span class="p">])</span>
+
+<span class="c1"># Define nonlinear constraint to plot</span>
+<span class="n">X_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">101</span><span class="p">)</span>
+<span class="n">constraint_f5</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">150</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">225</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">100</span><span class="o">/</span><span class="mi">19</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mi">79</span><span class="o">/</span><span class="mi">190</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">X_</span><span class="p">])</span>
+
+<span class="c1"># Plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">,</span> <span class="n">ax3</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+<span class="c1"># Plot first variable with respect to time</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">])</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$t$&#39;</span><span class="p">)</span>
+<span class="n">ax1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_1(t)$&#39;</span><span class="p">)</span>
+<span class="c1"># Plot second variable with respect to time</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">])</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$t$&#39;</span><span class="p">)</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_2(t)$&#39;</span><span class="p">)</span>
+<span class="c1"># Plot in (x_1, x_2) space</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">],</span> <span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Optimized trajectory&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">trajectory</span> <span class="ow">in</span> <span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">reference_trajectories</span><span class="p">:</span>
+    <span class="n">ax3</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">],</span> <span class="n">trajectory</span><span class="p">[</span><span class="s1">&#39;x2&#39;</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;_nolegend_&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">X_</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">constraint_f5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Forbidden area&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$x_1$&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$x_2$&#39;</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax3</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Arthur Talpaert, Florent Dewez, Benjamin Guedj, Vincent Vadewalle
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

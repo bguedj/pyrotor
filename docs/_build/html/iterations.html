@@ -1,0 +1,386 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Iterations module &mdash; Pyrotor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Pyrotor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Iterations module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Pyrotor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Iterations module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/iterations.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="iterations-module">
+<h1>Iterations module<a class="headerlink" href="#iterations-module" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-pyrotor.iterations"></span><p>Describe the iterative process performed to find and optimized
+trajectory that satisfies the constraints.</p>
+<dl class="function">
+<dt id="pyrotor.iterations.binary_search_best_trajectory">
+<code class="sig-prename descclassname">pyrotor.iterations.</code><code class="sig-name descname">binary_search_best_trajectory</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">i</em>, <em class="sig-param">step</em>, <em class="sig-param">verbose</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.iterations.binary_search_best_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a binary search amoung all the kappas in order to find the
+optimised trajectory that verifies constraints.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory: Pyrotor instance</dt><dd><p>Trajectory to optimize with associated attributes; the
+object will be directly modified by reference</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>i: int</dt><dd><p>Index of the kappa to use</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>step: int</dt><dd><p>Size of the current split</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>verbose: boolean</dt><dd><p>Display pr not the verbose</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.iterations.compute_kappa_max">
+<code class="sig-prename descclassname">pyrotor.iterations.</code><code class="sig-name descname">compute_kappa_max</code><span class="sig-paren">(</span><em class="sig-param">kappa_mean</em>, <em class="sig-param">opti_factor</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.iterations.compute_kappa_max" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the supposed possible maximum value of kappa.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>kappa_mean: float</dt><dd><p>Mean of kappa</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>opti_factor: float</dt><dd><p>Optimisation factor</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>kappa_max: float</dt><dd><p>Supposed possible maximum value of kappa</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.iterations.compute_kappa_mean">
+<code class="sig-prename descclassname">pyrotor.iterations.</code><code class="sig-name descname">compute_kappa_mean</code><span class="sig-paren">(</span><em class="sig-param">evaluations_f</em>, <em class="sig-param">evaluations_g</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.iterations.compute_kappa_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the mean of kappa.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>evaluations_f: list</dt><dd><p>Evaluations of f over reference coefficients</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>evaluations_g: list</dt><dd><p>Evaluations of g over reference coefficients</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>kappa_mean: float</dt><dd><p>Mean of kappa</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.iterations.get_kappa_boundaries">
+<code class="sig-prename descclassname">pyrotor.iterations.</code><code class="sig-name descname">get_kappa_boundaries</code><span class="sig-paren">(</span><em class="sig-param">reference_coefficients</em>, <em class="sig-param">matrix_q</em>, <em class="sig-param">vector_w</em>, <em class="sig-param">sigma_inverse</em>, <em class="sig-param">c_weight</em>, <em class="sig-param">opti_factor</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.iterations.get_kappa_boundaries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Give the possible minumum and maximum supposed values of kappa.</p>
+<p>Here the cost function is of the form f + kappa*g so kappa is
+chosen in such a way that kappa = opti_factor * mean f / mean g
+where opti_factor is chosen by the user.</p>
+<p>The larger opti_factor is, the more important g is when optimising.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>reference_coefficients: ndarray</dt><dd><p>Coefficients of reference trajectories</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>vector_q: ndarray</dt><dd><p>Matrix of the quadratic term</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>vector_w: ndarray</dt><dd><p>Vector of the linear term (without intercept)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sigma_inverse: ndarray</dt><dd><p>Pseudoinverse of the covariance matrix of the reference
+coefficients</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>c_weight: ndarray</dt><dd><p>Coefficients of a weighted trajectory</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>opti_factor: float</dt><dd><p>Optimisation factor</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Outputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>kappa_min: float</dt><dd><p>Supposed possible minimum value of kappa; here set to 0</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>kappa_max: float</dt><dd><p>Supposed possible maximum value of kappa</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.iterations.iterate_through_kappas">
+<code class="sig-prename descclassname">pyrotor.iterations.</code><code class="sig-name descname">iterate_through_kappas</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">kappa_min</em>, <em class="sig-param">kappa_max</em>, <em class="sig-param">verbose</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.iterations.iterate_through_kappas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate through the different kappas in order to find the
+optimised trajectory that verifies constraints.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory: Pyrotor instance</dt><dd><p>Trajectory to optimize with associated attributes; the
+object will be directly modified by reference</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>kappa_min: float</dt><dd><p>Supposed minimum possible kappa</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>kappa_max: float</dt><dd><p>Supposed maximum possible kappa</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>verbose: boolean</dt><dd><p>Display or not the verbose</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Arthur Talpaert, Florent Dewez, Benjamin Guedj, Vincent Vadewalle
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

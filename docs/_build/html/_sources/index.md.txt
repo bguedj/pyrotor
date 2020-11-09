@@ -3,11 +3,13 @@
 
 # Pyrotor
 
-Pyrotor is a Python package for trajectory optimization based on data. It provides tools to create optimized trajectories that satisfies some constraints and look real.
+Pyrotor is a Python package for trajectory optimization based on data. It provides tools to create optimized trajectories that satisfies your constraints and look real.
 
 ### Getting started
 * [Installation](usage/installation.md)
 * [Tutorial](usage/tutorial.md)
+* [Overview](usage/overview.md)
+* [Features](usage/features.md)
 
 
 ### API
