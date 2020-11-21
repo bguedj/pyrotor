@@ -9,6 +9,7 @@ setup(name='pyrotor',
       version='1.0.0',
       description='Trajectory optimization package based on data',
       long_description=README,
+      long_description_content_type='text/markdown',
       packages=['pyrotor'],
       package_data={
           "pyrotor": ["toy_dataset/example_1/*.csv",
