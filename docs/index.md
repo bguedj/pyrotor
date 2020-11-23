@@ -1,21 +1,23 @@
 [//]: # (To create the doc, run the following command: make html)
 [//]: # (To write beautiful markdown: https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 
-# Pyrotor
+# PyRotor
+## Python Route Trajectory Optimiser
 
-Pyrotor is a Python package for trajectory optimization based on data. It provides tools to create optimized trajectories that satisfies your constraints and look real.
+PyRotor is a Python library for trajectory optimisation problems which leverages available trajectory data to get realistic trajectories.
+
+It has been created and developed by members of the [MODAL](https://team.inria.fr/modal/) team from [Inria](https://www.inria.fr).
 
 ### Getting started
 * [Installation](usage/installation.md)
 * [Tutorial](usage/tutorial.md)
 * [Overview](usage/overview.md)
-* [Features](usage/features.md)
-
+* [Examples](usage/features.md)
 
 ### API
 * [Pyrotor class](pyrotor.md)
 
-### In depth documentation
+### In-depth documentation
 * [basis](basis.md)
 * [constraints](constraints.md)
 * [cost_functions](cost_functions.md)
