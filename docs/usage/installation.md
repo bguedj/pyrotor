@@ -5,7 +5,7 @@ Run the following command:
 $ pip install pyrotor
 ```
 
-Or from source:
+Or from the source:
 ```bash
 $ git clone https://github.com/bguedj/pyrotor
 $ pip install pyrotor/.

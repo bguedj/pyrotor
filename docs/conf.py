@@ -19,8 +19,8 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'Pyrotor'
-copyright = '2020, Arthur Talpaert, Florent Dewez, Benjamin Guedj, Vincent Vadewalle'
-author = 'Arthur Talpaert, Florent Dewez, Benjamin Guedj, Vincent Vadewalle'
+copyright = '2020, Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle'
+author = 'Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle'
 
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'

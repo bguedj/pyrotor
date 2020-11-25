@@ -1,23 +1,26 @@
 ## Tutorial
 
-We create a simple problem, with trajectories in 2 dimensions, a few constraint functions and an explicit cost function.
+Here we explain how PyRotor works through the example given in the notebook [getting_started.ipynb](https://github.com/bguedj/pyrotor/tree/master/examples/getting_started.ipynb).
 
-First, we need to import Pyrotor and Numpy to define our problem
+We consider a very simple problem in dimension 2. It consists in optimising a trajectory in the square [0,1]x[0,1] which is always above a forbidden region. The cost function models the distance of the curve to the origin.
+
+First we need to import Pyrotor and Numpy to define our problem.
 
 ```python
 import numpy as np
 import pyrotor
 ```
 
-Import the trajectories of a toy dataset:
+Then we import the trajectories of reference from a toy dataset. Note that these trajectories have been generated using the notebook [generate.ipynb](https://github.com/bguedj/pyrotor/tree/master/examples/generate.ipynb).
+
 ```python
 reference_trajectories = pyrotor.datasets.load_toy_dataset("example_1")
-# take a look at the data
-print(reference_trajectoies[0].head())
+# Visualise the data
+print(reference_trajectories[0].head())
 ```
 
-Then we can define our quadratic cost function that you want to minimize
-let's say:
+The next step is to define the cost function. Currently PyRotor covers costs defined by the integral of a quadratic instantaneous cost. The user defines the matrix, the vector and the real number giving the quadratic instantaneous cost.
+The user can also indicates a path to a quadratic model in pickle format, resulting from a learning process; see the [objective_matrices](objective_matrices.md) page.
 
 ```python
 # Quadratic part
@@ -32,7 +35,7 @@ c = 2.87
 quadratic_model = [c, w, q]
 ```
 
-Now, we can set our initial and final states of our variables:
+Now we set the initial and final conditions for the two variables. Note that a tolerated error, modelled by the parameter 'delta', can be taken into account.
 
 ```python
 endpoints = {'x1': {'start': .111,
@@ -43,7 +46,7 @@ endpoints = {'x1': {'start': .111,
                     'delta': 0.0001}}
 ```
 
-Define independent variable (time)
+The trajectories being parametrised, we define the independent variable (time).
 
 ```python
 independent_variable = {'start': .1,
@@ -54,7 +57,8 @@ delta_time = independent_variable['end'] - independent_variable['start']
 delta_time /= independent_variable['frequency']
 independent_variable['points_nb'] = int(delta_time) + 1
 ```
-Define constraints
+
+As explained above, the trajectory should remain in the square and outside a forbidden region. These constraints are then defined as functions.
 
 ```python
 # x1 > 0
@@ -86,10 +90,7 @@ def f5(data):
 constraints = [f1, f2, f3, f4, f5]
 ```
 
-Define your functional basis. Your trajectories of the training data are
-projected in a lower dimensional space: in our case, the Legendre space.
-The variable x1 is made of basis of 4 dimensions and the variable x2 is made of
-6 dimensions.
+The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently only the Legendre polynomials basis is implemented but the methodology is not restricted to this family.
 
 ```python
 basis = 'legendre'
@@ -97,7 +98,9 @@ basis_dimension = {'x1': 4,
                    'x2': 6}
 ```
 
-Create an instance to model our problem.
+We create now an instance to model our problem. Note that the user can choose the number of reference trajectories and the value of the optimisation factor. This factor models the balance between optimising and staying close to reference trajectories: the larger, the more we optimise.
+Through the argument 'sigma_inverse', the user can define manually the covariance matrix modelling the relations between each coefficient of the variables; this matrix is by default estimated from the reference trajectories (the default value is used in the present example). In this case, the solution tends to reproduce the pattern of the reference trajectories.
+The user can also decide to use the quadratic programming solver 'qp' from [CVXOPT](http://cvxopt.org/userguide/coneprog.html#quadratic-programming). Otherwise the generic solver 'minimize' from [SciPy](https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html) is used.
 
 ```python
 mr_pyrotor = pyrotor.Pyrotor(quadratic_model,
@@ -113,13 +116,13 @@ mr_pyrotor = pyrotor.Pyrotor(quadratic_model,
                              verbose=False)
 ```
 
-Predict an optimized trajectory:
+Let us compute the optimised trajectory.
 
 ```python
 mr_pyrotor.compute_optimal_trajectory()
 ```
 
-Compute the savings:
+We compute the savings to assess the optimisation.
 
 ```python
 savings = pd.Series(mr_pyrotor.compute_gains(), name='Savings')
@@ -128,7 +131,7 @@ relative_savings = pd.Series(mr_pyrotor.compute_relative_gains() * 100, name='Re
 print(relative_savings)
 ```
 
-And finally plot the result:
+And we finally plot the results.
 
 ```python
 # Define time axis
