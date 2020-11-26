@@ -22,4 +22,4 @@ $ pip install pyrotor
 
 - - - -
 ### Reference
-- Coming soon
+- Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle. An end-to-end data-driven optimisation framework for constrained trajectories. [Preprint version](https://arxiv.org/abs/2011.11820).
