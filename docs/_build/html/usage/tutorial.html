@@ -150,20 +150,21 @@
             
   <div class="section" id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
-<p>We create a simple problem, with trajectories in 2 dimensions, a few constraint functions and an explicit cost function.</p>
-<p>First, we need to import Pyrotor and Numpy to define our problem</p>
+<p>Here we explain how PyRotor works through the example given in the notebook <a class="reference external" href="https://github.com/bguedj/pyrotor/tree/master/examples/getting_started.ipynb">getting_started.ipynb</a>.</p>
+<p>We consider a very simple problem in dimension 2. It consists in optimising a trajectory in the square [0,1]x[0,1] which is always above a forbidden region. The cost function models the distance of the curve to the origin.</p>
+<p>First we need to import Pyrotor and Numpy to define our problem.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pyrotor</span>
 </pre></div>
 </div>
-<p>Import the trajectories of a toy dataset:</p>
+<p>Then we import the trajectories of reference from a toy dataset. Note that these trajectories have been generated using the notebook <a class="reference external" href="https://github.com/bguedj/pyrotor/tree/master/examples/generate.ipynb">generate.ipynb</a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reference_trajectories</span> <span class="o">=</span> <span class="n">pyrotor</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">load_toy_dataset</span><span class="p">(</span><span class="s2">&quot;example_1&quot;</span><span class="p">)</span>
-<span class="c1"># take a look at the data</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">reference_trajectoies</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+<span class="c1"># Visualise the data</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">reference_trajectories</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
 </pre></div>
 </div>
-<p>Then we can define our quadratic cost function that you want to minimize
-let’s say:</p>
+<p>The next step is to define the cost function. Currently PyRotor covers costs defined by the integral of a quadratic instantaneous cost. The user defines the matrix, the vector and the real number giving the quadratic instantaneous cost.
+The user can also indicates a path to a quadratic model in pickle format, resulting from a learning process; see the <a class="reference internal" href="../modules/objective_matrices.html#module-pyrotor.objective_matrices" title="pyrotor.objective_matrices"><a class="reference external" href="objective_matrices">objective_matrices</a></a> page.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quadratic part</span>
 <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
               <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
@@ -176,7 +177,7 @@ let’s say:</p>
 <span class="n">quadratic_model</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Now, we can set our initial and final states of our variables:</p>
+<p>Now we set the initial and final conditions for the two variables. Note that a tolerated error, modelled by the parameter ‘delta’, can be taken into account.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">endpoints</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">111</span><span class="p">,</span>
                     <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">912</span><span class="p">,</span>
                     <span class="s1">&#39;delta&#39;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">},</span>
@@ -185,7 +186,7 @@ let’s say:</p>
                     <span class="s1">&#39;delta&#39;</span><span class="p">:</span> <span class="mf">0.0001</span><span class="p">}}</span>
 </pre></div>
 </div>
-<p>Define independent variable (time)</p>
+<p>The trajectories being parametrised, we define the independent variable (time).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">independent_variable</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;start&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span>
                         <span class="s1">&#39;end&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">9</span><span class="p">,</span>
                         <span class="s1">&#39;frequency&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">01</span><span class="p">}</span>
@@ -195,7 +196,7 @@ let’s say:</p>
 <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;points_nb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">delta_time</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
 </pre></div>
 </div>
-<p>Define constraints</p>
+<p>As explained above, the trajectory should remain in the square and outside a forbidden region. These constraints are then defined as functions.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># x1 &gt; 0</span>
 <span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
     <span class="n">x1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;x1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
@@ -225,16 +226,15 @@ let’s say:</p>
 <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">,</span> <span class="n">f5</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>Define your functional basis. Your trajectories of the training data are
-projected in a lower dimensional space: in our case, the Legendre space.
-The variable x1 is made of basis of 4 dimensions and the variable x2 is made of
-6 dimensions.</p>
+<p>The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently only the Legendre polynomials basis is implemented but the methodology is not restricted to this family.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;legendre&#39;</span>
 <span class="n">basis_dimension</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
                    <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
 </pre></div>
 </div>
-<p>Create an instance to model our problem.</p>
+<p>We create now an instance to model our problem. Note that the user can choose the number of reference trajectories and the value of the optimisation factor. This factor models the balance between optimising and staying close to reference trajectories: the larger, the more we optimise.
+Through the argument ‘sigma_inverse’, the user can define manually the covariance matrix modelling the relations between each coefficient of the variables; this matrix is by default estimated from the reference trajectories (the default value is used in the present example). In this case, the solution tends to reproduce the pattern of the reference trajectories.
+The user can also decide to use the quadratic programming solver ‘qp’ from <a class="reference external" href="http://cvxopt.org/userguide/coneprog.html#quadratic-programming">CVXOPT</a>. Otherwise the generic solver ‘minimize’ from <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.minimize.html">SciPy</a> is used.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mr_pyrotor</span> <span class="o">=</span> <span class="n">pyrotor</span><span class="o">.</span><span class="n">Pyrotor</span><span class="p">(</span><span class="n">quadratic_model</span><span class="p">,</span>
                              <span class="n">reference_trajectories</span><span class="p">,</span>
                              <span class="n">endpoints</span><span class="p">,</span>
@@ -248,18 +248,18 @@ The variable x1 is made of basis of 4 dimensions and the variable x2 is made of
                              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Predict an optimized trajectory:</p>
+<p>Let us compute the optimised trajectory.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_optimal_trajectory</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Compute the savings:</p>
+<p>We compute the savings to assess the optimisation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_gains</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Savings&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">savings</span><span class="p">)</span>
 <span class="n">relative_savings</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">mr_pyrotor</span><span class="o">.</span><span class="n">compute_relative_gains</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Relative savings [%]&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">relative_savings</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>And finally plot the result:</p>
+<p>And we finally plot the results.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define time axis</span>
 <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;start&#39;</span><span class="p">],</span>
                 <span class="n">independent_variable</span><span class="p">[</span><span class="s1">&#39;end&#39;</span><span class="p">],</span>
@@ -306,7 +306,7 @@ The variable x1 is made of basis of 4 dimensions and the variable x2 is made of
   <div role="contentinfo">
     <p>
         
-        &copy; Copyright 2020, Arthur Talpaert, Florent Dewez, Benjamin Guedj, Vincent Vadewalle
+        &copy; Copyright 2020, Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle
 
     </p>
   </div>
