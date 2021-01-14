@@ -9,7 +9,7 @@ PyRotor leverages available trajectory data to focus the search space and to est
 - - - -
 ### Documentation and examples
 
-An online documentation is available [here](https://pyrotor.readthedocs.io/en/latest/) but is still under construction. Thereotical details on the methodology will be soon available in a theoretical paper.
+An online documentation is available [here](https://pyrotor.readthedocs.io/en/latest/) but is still under construction. Thereotical details on the methodology are available in the below reference.
 
 The [examples](https://github.com/bguedj/pyrotor/tree/master/examples) folder provides currently two examples showing the use of PyRotor.
 
