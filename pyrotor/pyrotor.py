@@ -40,7 +40,7 @@ class Pyrotor():
                  endpoints,
                  constraints,
                  basis,
-                 basis_dimension,
+                 basis_features,
                  independent_variable,
                  n_best_trajectory_to_use=10,
                  opti_factor=2,
@@ -74,8 +74,8 @@ class Pyrotor():
                 constraint is not satisfied
             - basis: string
                 Name of the functional basis
-            - basis_dimension: dict
-                Give the number of basis functions for each state
+            - basis_features: dict
+                Contain information on the basis for each state
             - independent_variable: dict
                 Describe the time-interval on which are defined the
                 trajectories
@@ -99,17 +99,26 @@ class Pyrotor():
         self.reference_trajectories = reference_trajectories
         self.constraints = constraints
         self.basis = basis
-        self.basis_dimension = basis_dimension
+        self.basis_features = basis_features
         self.independent_variable = independent_variable
         self.derivative = derivative
         self.use_quadratic_programming = use_quadratic_programming
         self.n_jobs = n_jobs
         self.verbose = verbose
 
+        # Create basis_dimension dictionary containing dimension of each state
+        if basis == 'legendre':
+            self.basis_dimension = basis_features
+        elif basis == 'bspline':
+            nb_knots = len(basis_features['knots'])
+            # Number of B-splines = number of internal knots + degree + 1
+            self.basis_dimension = {i: basis_features[i] + nb_knots + 1
+                                    for i in basis_features if i != 'knots'}
+
         # Compute reference coefficients
         ref_coefficients = trajectories_to_coefs(
-            self.reference_trajectories, self.basis, self.basis_dimension,
-            self.n_jobs)
+            self.reference_trajectories, self.basis, self.basis_features,
+            self.basis_dimension, self.n_jobs)
         # If derivative, compute costs with derivatives
         if self.derivative:
             reference_trajectories_deriv = add_derivatives(
@@ -121,8 +130,8 @@ class Pyrotor():
                 self.reference_trajectories, self.quadratic_model)
         # Compute matrices involved in the final cost function
         self.W, self.Q = compute_objective_matrices(
-                self.basis, self.basis_dimension, self.quadratic_model,
-                self.derivative)
+                self.basis, self.basis_features, self.basis_dimension,
+                self.quadratic_model, self.derivative)
         # Get or compute the variance-covariance and precision matrices
         if sigma is not None:
             self.sigma = sigma
@@ -132,7 +141,9 @@ class Pyrotor():
                 ref_coefficients)
         # Create endpoints constraints
         self.linear_conditions, self.phi = get_linear_conditions(
-            self.basis_dimension, endpoints, ref_coefficients, self.sigma)
+            self.basis, self.basis_dimension, endpoints, ref_coefficients,
+            self.sigma
+            )
         # FIXME: Avoid computing again coefficients and costs ?
         # Select best reference trajectories and compute coefficients and
         # costs
@@ -140,8 +151,8 @@ class Pyrotor():
             self.reference_trajectories, self.reference_costs,
             n_best_trajectory_to_use)
         ref_coefficients = trajectories_to_coefs(
-            self.reference_trajectories, self.basis, self.basis_dimension,
-            self.n_jobs)
+            self.reference_trajectories, self.basis, self.basis_features,
+            self.basis_dimension, self.n_jobs)
         # As above, compute derivatives if necessary
         if self.derivative:
             reference_trajectories_deriv = add_derivatives(
@@ -173,7 +184,7 @@ class Pyrotor():
             # Construct optimized trajectory from coefficients
             self.trajectory = coef_to_trajectory(
                 c_opt, self.independent_variable["points_nb"], self.basis,
-                self.basis_dimension)
+                self.basis_features, self.basis_dimension)
             # Compute costs
             if self.derivative:
                 trajectory = add_derivatives(

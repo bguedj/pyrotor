@@ -11,11 +11,13 @@ from pyrotor.linear_conditions import get_linear_conditions
 
 
 def test_get_endpoints_matrix():
+    # Test Legendre
+    basis = 'legendre'
     basis_dimensions = {"A": 2}
     endpoints = {"A": {"start": 1, "end": 2, "delta": 1}}
     expected = np.array([[1., -1.],
                          [1.,  1.]])
-    endpoints_matrix = get_endpoints_matrix(basis_dimensions, endpoints)
+    endpoints_matrix = get_endpoints_matrix(basis, basis_dimensions, endpoints)
     assert (expected == endpoints_matrix).all()
 
     basis_dimension = {"A": 3, "B": 2}
@@ -25,7 +27,7 @@ def test_get_endpoints_matrix():
                          [0.,  0.,  0.,  1., -1.],
                          [1.,  1.,  1.,  0.,  0.],
                          [0.,  0.,  0.,  1.,  1.]])
-    endpoints_matrix = get_endpoints_matrix(basis_dimension, endpoints)
+    endpoints_matrix = get_endpoints_matrix(basis, basis_dimension, endpoints)
     assert (expected == endpoints_matrix).all()
 
     basis_dimensions = {"A": 3, "B": 2}
@@ -34,7 +36,21 @@ def test_get_endpoints_matrix():
     expected_phi = np.array([[0, 0,  0,  1,  -1.],
                              [0,  0,  0,  1., 1.]])
 
-    phi = get_endpoints_matrix(basis_dimensions, endpoints)
+    phi = get_endpoints_matrix(basis, basis_dimensions, endpoints)
+    assert (phi == expected_phi).all()
+
+    # Test B-spline
+    basis = 'bspline'
+    basis_dimensions = {"A": 2, "B": 3, "C": 3}
+    endpoints = {"B": {"start": 1, "end": 2, "delta": 1},
+                 "C": {"start": 2, "end": 2, "delta": 2}}
+    
+    expected_phi = np.array([[0., 0., 1., 0., 0., 0., 0., 0.],
+                             [0., 0., 0., 0., 0., 1., 0., 0.],
+                             [0., 0., 0., 0., 1., 0., 0., 0.],
+                             [0., 0., 0., 0., 0., 0., 0., 1.]])
+
+    phi = get_endpoints_matrix(basis, basis_dimensions, endpoints)
     assert (phi == expected_phi).all()
 
 
@@ -98,6 +114,7 @@ def test_get_endpoints_bounds():
 
 
 def test_get_linear_conditions():
+    # FIXME: Test B-Spline
     basis_dimensions = {"A": 3, "B": 3}
     endpoints = {'B': {'start': 5, 'end': 7, 'delta': 2},
                  'A': {'start': 1, 'end': 2, 'delta': 1}}
@@ -114,10 +131,12 @@ def test_get_linear_conditions():
                   [0., 0., 0., 1., 0., 0.],
                   [0., 0., x, 0., 0., x]])
     sigma = np.linalg.multi_dot([v, lambda_sigma, v.T])
-
-    linear_conditions, linear_conditions_matrix = get_linear_conditions(basis_dimensions, endpoints, coefficients, sigma)
     expected_left_endpoints = [0., 3., 1., 5.]
-    expected_right_endpoints = [2, 7, 3, 9]
+    expected_right_endpoints = [2., 7., 3., 9.]
+
+    # Test Legendre
+    basis = 'legendre'
+    linear_conditions, linear_conditions_matrix = get_linear_conditions(basis, basis_dimensions, endpoints, coefficients, sigma)
     expected_linear_conditions_matrix = np.array([[1., -1.,  1.,  0.,  0., 0.],
                                                   [0.,  0.,  0.,  1., -1., 1.],
                                                   [1.,  1.,  1.,  0.,  0., 0.],
@@ -127,3 +146,4 @@ def test_get_linear_conditions():
     np.testing.assert_almost_equal(expected_left_endpoints, linear_conditions.lb)
     np.testing.assert_almost_equal(expected_right_endpoints, linear_conditions.ub)
     np.testing.assert_almost_equal(expected_linear_conditions_matrix, linear_conditions_matrix)
+    
