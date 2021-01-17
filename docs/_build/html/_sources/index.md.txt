@@ -24,7 +24,7 @@ It has been created and developed by members of the [MODAL](https://team.inria.f
 * [data_analysis](modules/data_analysis.md)
 * [datasets](modules/datasets.md)
 * [iterations](modules/iterations.md)
-* [linear_conditions](modules/linear_conditions.md`)
+* [linear_conditions](modules/linear_conditions.md)
 * [log](modules/log.md)
 * [objective_matrices](modules/objective_matrices.md)
 * [optimization](modules/optimization.md)
