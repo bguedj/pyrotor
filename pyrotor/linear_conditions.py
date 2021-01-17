@@ -12,13 +12,15 @@ from scipy.linalg import block_diag, null_space
 from scipy.optimize import LinearConstraint
 
 
-def get_linear_conditions(basis_dimensions, endpoints, coefficients,
+def get_linear_conditions(basis, basis_dimensions, endpoints, coefficients,
                           sigma):
     """
     Return scipy object containing the linear conditions for the
     optimization problem.
 
     Inputs:
+        - basis: string
+            Name of the functional basis
         - basis_dimensions: dict
             Give the desired number of basis functions for each state
         - endpoints: dict
@@ -37,7 +39,7 @@ def get_linear_conditions(basis_dimensions, endpoints, coefficients,
             Matrix modelling the linear conditions
     """
     # Get matrix and bounds coming from endpoints conditions
-    phi = get_endpoints_matrix(basis_dimensions, endpoints)
+    phi = get_endpoints_matrix(basis, basis_dimensions, endpoints)
     states = basis_dimensions.keys()
     left_endpoints, right_endpoints = get_endpoints_bounds(endpoints, states)
     # Compute intersection between null space of sigma and phiT phi
@@ -135,7 +137,7 @@ def get_implicit_bounds(null_space_sigma_phi, coefficients):
     return projected_mean_coefficients
 
 
-def get_endpoints_matrix(basis_dimensions, endpoints):
+def get_endpoints_matrix(basis, basis_dimensions, endpoints):
     """
     Compute a matrix modelling the endpoints conditions involved in the
     optimization problem.
@@ -144,6 +146,8 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
     while the lower-blocks contains the ending conditions.
 
     Inputs:
+        - basis: string
+            Name of the functional basis
         - basis_dimensions: dict
             Give the desired number of basis functions for each state
         - endpoints: dict
@@ -154,24 +158,38 @@ def get_endpoints_matrix(basis_dimensions, endpoints):
         - phi: ndarray
             Matrix modelling the endpoints conditions
     """
+    # Define matrix shape
     phi_width = sum(basis_dimensions.values())
     phi_height = 2 * len(endpoints)
     phi = np.zeros((phi_height, phi_width))
     i = j = 0
-    for state in basis_dimensions:
-        if state in endpoints:
-            for k in range(basis_dimensions[state]):
-                basis_k = legendre.Legendre.basis(k, domain=[0, 1])
-                _, basis_k_evaluated = legendre.Legendre.linspace(basis_k,
-                                                                  n=2)
-                # Define upper-block
-                phi[j, i] = basis_k_evaluated[0]
-                # Define lower-block
-                phi[phi_height//2+j, i] = basis_k_evaluated[1]
+    # Legendre case - Fill using values of Legendre polynomials at the
+    # endpoints
+    if basis == 'legendre':
+        for state in basis_dimensions:
+            if state in endpoints:
+                for k in range(basis_dimensions[state]):
+                    basis_k = legendre.Legendre.basis(k, domain=[0, 1])
+                    _, basis_k_evaluated = legendre.Legendre.linspace(basis_k,
+                                                                      n=2)
+                    # Define upper-block
+                    phi[i, j] = basis_k_evaluated[0]
+                    # Define lower-block
+                    phi[phi_height//2+i, j] = basis_k_evaluated[1]
+                    j += 1
                 i += 1
-            j += 1
-        else:
-            i += basis_dimensions[state]
+            else:
+                j += basis_dimensions[state]
+    # B-spline case - Fill using the fact that only the first and last splines
+    # are non-zero at the endpoints with value 1
+    elif basis == 'bspline':
+        # Loop over states
+        for state in basis_dimensions:
+            if state in endpoints:
+                phi[i, j] = 1.
+                phi[phi_height//2+i, j+basis_dimensions[state]-1] = 1.
+                i += 1
+            j += basis_dimensions[state]
 
     return phi
 

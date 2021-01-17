@@ -11,7 +11,7 @@ import numpy as np
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LinearRegression
-from .basis import compute_legendre_features
+from .basis import compute_basis_features
 
 
 def model_to_matrix(model, basis_dimension, derivative):
@@ -124,8 +124,8 @@ def extend_matrix(w, q, basis_dimension, derivative):
     return W_, Q_
 
 
-def compute_objective_matrices(basis, basis_dimension, quad_model,
-                               derivative):
+def compute_objective_matrices(basis, basis_features, basis_dimension,
+                               quad_model, derivative):
     """
     Compute the matrices and vectors from a quadratic model and
     involved in the final cost function.
@@ -133,6 +133,8 @@ def compute_objective_matrices(basis, basis_dimension, quad_model,
     Inputs:
         - basis: string
             Name of the functional basis
+        - basis_features: dict
+            Contain information on the basis for each state
         - basis_dimension: dict
             Give the number of basis functions for each state
         - quad_model: str or list
@@ -147,10 +149,11 @@ def compute_objective_matrices(basis, basis_dimension, quad_model,
         - Q: ndarray
             Matrix involved in the quadratic part of the cost function
     """
-    # Compute means and dot products depending on the basis
-    if basis == 'legendre':
-        mean, dot_product = compute_legendre_features(basis_dimension,
-                                                      derivative)
+    # Compute integrals and dot products depending on the basis
+    integral, dot_product = compute_basis_features(basis,
+                                                   basis_features,
+                                                   basis_dimension,
+                                                   derivative)
 
     # If pickle model, compute w, q using model_to_matrix()
     if isinstance(quad_model, Pipeline):
@@ -162,7 +165,7 @@ def compute_objective_matrices(basis, basis_dimension, quad_model,
 
     # Compute W, Q appearing in the final cost function
     W_, Q_ = extend_matrix(w, q, basis_dimension, derivative)
-    W = np.multiply(W_, mean)
+    W = np.multiply(W_, integral)
     Q = np.multiply(Q_, dot_product)
     # If derivative, one has to sum up blocks of W and Q to take into
     # account derivatives of states in the cost function
