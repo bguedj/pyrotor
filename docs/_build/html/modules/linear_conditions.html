@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Linear conditions module &mdash; Pyrotor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Pyrotor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Linear conditions module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrotor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Linear conditions module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/linear_conditions.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="linear-conditions-module">
+<h1>Linear conditions module<a class="headerlink" href="#linear-conditions-module" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-pyrotor.linear_conditions"></span><p>Modelisation of linear relations involved in the optimization problem</p>
+<dl class="function">
+<dt id="pyrotor.linear_conditions.get_endpoints_bounds">
+<code class="sig-prename descclassname">pyrotor.linear_conditions.</code><code class="sig-name descname">get_endpoints_bounds</code><span class="sig-paren">(</span><em class="sig-param">endpoints</em>, <em class="sig-param">states</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.linear_conditions.get_endpoints_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute right-hand side for a linear condition associated with
+endpoints conditions and involved in the optimization problem.</p>
+<dl class="simple">
+<dt>Input:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>endpoints: dict</dt><dd><p>Initial and final states that the optimized trajectory must
+satisfy
+ex: {‘Var 1’: {‘start’: 109, ‘end’: 98, ‘delta’: 10}, …}</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>states: iterable</dt><dd><p>State names</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Outputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>left_endpoints: list</dt><dd><p>List containing the lower conditions (at 0 and T) for each
+state</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>right_endpoints: list</dt><dd><p>List containing the upper conditions (at 0 and T) for each
+state</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.linear_conditions.get_endpoints_matrix">
+<code class="sig-prename descclassname">pyrotor.linear_conditions.</code><code class="sig-name descname">get_endpoints_matrix</code><span class="sig-paren">(</span><em class="sig-param">basis</em>, <em class="sig-param">basis_dimensions</em>, <em class="sig-param">endpoints</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.linear_conditions.get_endpoints_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a matrix modelling the endpoints conditions involved in the
+optimization problem.</p>
+<p>The upper-block of the matrix contains the starting conditions
+while the lower-blocks contains the ending conditions.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>basis: string</dt><dd><p>Name of the functional basis</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>basis_dimensions: dict</dt><dd><p>Give the desired number of basis functions for each state</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>endpoints: dict</dt><dd><p>Initial and final states that the optimized trajectory must
+satisfy
+ex: {‘Var 1’: {‘start’: 109, ‘end’: 98, ‘delta’: 10}, …}</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>phi: ndarray</dt><dd><p>Matrix modelling the endpoints conditions</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.linear_conditions.get_implicit_bounds">
+<code class="sig-prename descclassname">pyrotor.linear_conditions.</code><code class="sig-name descname">get_implicit_bounds</code><span class="sig-paren">(</span><em class="sig-param">null_space_sigma_phi</em>, <em class="sig-param">coefficients</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.linear_conditions.get_implicit_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Project coefficients mean onto the intersection of null space of
+sigma and Im PhiT * Phi.</p>
+<p>Provide right-hand side for a linear condition in the optimization
+problem.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><dl class="simple">
+<dt>null_space_sigma_phi: ndarray</dt><dd><p>Matrix whose columns are orthonormal vectors spanning the
+intersection between null space of sigma and phiT * phi</p>
+</dd>
+<dt>coefficients: list of ndarray</dt><dd><p>Each element of the list is an array containing all the
+coefficients associated with a trajectory</p>
+</dd>
+</dl>
+</dd>
+<dt>Ouput:</dt><dd><dl class="simple">
+<dt>projected_mean_coefficients: ndarray</dt><dd><p>Vector given by the product between null_space_sigma_phi.T
+and coefficients mean</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.linear_conditions.get_implicit_matrix">
+<code class="sig-prename descclassname">pyrotor.linear_conditions.</code><code class="sig-name descname">get_implicit_matrix</code><span class="sig-paren">(</span><em class="sig-param">sigma</em>, <em class="sig-param">phi</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.linear_conditions.get_implicit_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an orthonormal basis spanning the intersection between null
+space of sigma and phiT * phi. Return a matrix whose columns
+provide the basis and which is involved in implicit conditions in
+the optimization problem.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>sigma: ndarray</dt><dd><p>Matrix interpreted as an estimated covariance matrix</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>phi: ndarray</dt><dd><p>Matrix modelling the endpoints conditions</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>null_space_sigma_phi: ndarray</dt><dd><p>Matrix whose columns are orthonormal vectors and spanning
+the intersection between null space of sigma and phiT * phi</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.linear_conditions.get_linear_conditions">
+<code class="sig-prename descclassname">pyrotor.linear_conditions.</code><code class="sig-name descname">get_linear_conditions</code><span class="sig-paren">(</span><em class="sig-param">basis</em>, <em class="sig-param">basis_dimensions</em>, <em class="sig-param">endpoints</em>, <em class="sig-param">coefficients</em>, <em class="sig-param">sigma</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.linear_conditions.get_linear_conditions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return scipy object containing the linear conditions for the
+optimization problem.</p>
+<dl>
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>basis: string</dt><dd><p>Name of the functional basis</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>basis_dimensions: dict</dt><dd><p>Give the desired number of basis functions for each state</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>endpoints: dict</dt><dd><p>Initial and final states that the optimized trajectory must
+satisfy
+ex: {‘Var 1’: {‘start’: 109, ‘end’: 98, ‘delta’: 10}, …}</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="simple">
+<dt>coefficients: list of ndarray</dt><dd><p>Each element of the list is an array containing all the
+coefficients associated with a trajectory</p>
+</dd>
+<dt>sigma: ndarray</dt><dd><p>Matrix interpreted as an estimated covariance matrix</p>
+</dd>
+</dl>
+</dd>
+<dt>Outputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>linear_conditions: LinearConstraint object</dt><dd><p>Scipy object describing the linear conditions</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>linear_conditions_matrix: ndarray</dt><dd><p>Matrix modelling the linear conditions</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,418 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Cost functions module &mdash; Pyrotor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Pyrotor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Cost functions module</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrotor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Cost functions module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/cost_functions.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="cost-functions-module">
+<h1>Cost functions module<a class="headerlink" href="#cost-functions-module" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-pyrotor.cost_functions"></span><p>Compute the cost of a trajectory.</p>
+<dl class="function">
+<dt id="pyrotor.cost_functions.compute_cost">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">compute_cost</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">quadratic_model</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.compute_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute total cost of a trajectory given a quadratic model -
+Vectorized version.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory: DataFrame</dt><dd><p>Trajectory of interest</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>quadratic_model: str or list</dt><dd><p>if str then it is the path to the folder containing the
+pickle model; else the first element of the list is w,
+the second one is q and the third is the constant
+Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory_cost: float</dt><dd><p>Total cost of the trajectory</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.compute_cost_by_time">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">compute_cost_by_time</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">quadratic_model</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.compute_cost_by_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the cost of a trajectory at every time given a quadratic
+model - Vectorized version.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory: DataFrame</dt><dd><p>Trajectory of interest</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>quadratic_model: str or list</dt><dd><p>if str then it is the path to the folder containing the
+pickle model; else the first element of the list is w,
+the second one is q and the third is the constant
+Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>cost_by_time: ndarray</dt><dd><p>Trajectory cost at each time</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.compute_f">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">compute_f</code><span class="sig-paren">(</span><em class="sig-param">vector_x</em>, <em class="sig-param">sigma_inverse</em>, <em class="sig-param">c_weight</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.compute_f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute cost of a trajectory through its coefficients.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>vector_x: ndarray</dt><dd><p>Coefficients of a single trajectory</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sigma_inverse: ndarray</dt><dd><p>Pseudoinverse of the covariance matrix of the reference
+coefficients</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>c_weight: ndarray</dt><dd><p>Coefficients of a weighted trajectory</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>cost: float</dt><dd><p>The cost of the given trajectory</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.compute_g">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">compute_g</code><span class="sig-paren">(</span><em class="sig-param">vector_x</em>, <em class="sig-param">matrix_q</em>, <em class="sig-param">vector_w</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.compute_g" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the distance mean of a trajectory to the reference ones
+through its coefficients.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>vector_x: ndarray</dt><dd><p>Coefficients of a single trajectory</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>matrix_q: ndarray</dt><dd><p>Matrix of the quadratic term</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>vector_w: ndarray</dt><dd><p>Vector of the linear term (without intercept)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>g(vector_x): float</dt><dd><p>Distance of the trajectory to the reference ones</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.compute_trajectories_cost">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">compute_trajectories_cost</code><span class="sig-paren">(</span><em class="sig-param">trajectories</em>, <em class="sig-param">quadratic_model</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.compute_trajectories_cost" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the cost for each trajectory of a list.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectories: list of pd.DataFrame</dt><dd><p>Each element of the list is a trajectory</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>quadratic_model: str or list</dt><dd><p>if str then it is the path to the folder containing the
+pickle model; else the first element of the list is w,
+the second one is q and the third is the constant
+Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectories_cost: ndarray</dt><dd><p>Array containing the cost of the trajectories</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.load_model">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">load_model</code><span class="sig-paren">(</span><em class="sig-param">name</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.load_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model saved in a .pkl format.</p>
+<dl class="simple">
+<dt>Input:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>name: string</dt><dd><p>Name of the .pkl file</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Output:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>model: Python object</dt><dd><p>Loaded machine learning model, scipy class…</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyrotor.cost_functions.predict_cost_by_time">
+<code class="sig-prename descclassname">pyrotor.cost_functions.</code><code class="sig-name descname">predict_cost_by_time</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">quadratic_model</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.cost_functions.predict_cost_by_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict the cost for each time of the trajectory from a quadratic
+trained model.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><dl class="simple">
+<dt>trajectory: ndarray</dt><dd><p>Trajectory of interest</p>
+</dd>
+<dt>quadratic_model: sklearn.pipeline.Pipeline object</dt><dd><p>Quadratic model modelling trajectory cost</p>
+</dd>
+</dl>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>cost_by_time: ndarray</dt><dd><p>Predicted cost by time of your trajectory</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

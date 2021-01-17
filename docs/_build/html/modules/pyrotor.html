@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pyrotor class &mdash; Pyrotor 0.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Pyrotor
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Pyrotor class</a></li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Pyrotor</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Pyrotor class</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/modules/pyrotor.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pyrotor-class">
+<h1>Pyrotor class<a class="headerlink" href="#pyrotor-class" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><dl class="class">
+<dt id="pyrotor.pyrotor.Pyrotor">
+<em class="property">class </em><code class="sig-prename descclassname">pyrotor.pyrotor.</code><code class="sig-name descname">Pyrotor</code><span class="sig-paren">(</span><em class="sig-param">quadratic_model</em>, <em class="sig-param">reference_trajectories</em>, <em class="sig-param">endpoints</em>, <em class="sig-param">constraints</em>, <em class="sig-param">basis</em>, <em class="sig-param">basis_features</em>, <em class="sig-param">independent_variable</em>, <em class="sig-param">n_best_trajectory_to_use=10</em>, <em class="sig-param">opti_factor=2</em>, <em class="sig-param">sigma=None</em>, <em class="sig-param">derivative=False</em>, <em class="sig-param">use_quadratic_programming=True</em>, <em class="sig-param">n_jobs=None</em>, <em class="sig-param">verbose=True</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.pyrotor.Pyrotor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main interface of PyRotor, an optimization package based on data.</p>
+<p>Create a new PyPotor class.</p>
+<dl>
+<dt>Inputs:</dt><dd><ul>
+<li><dl class="simple">
+<dt>quadratic_model: str or list</dt><dd><p>if str then it is the path to the folder containing the
+pickle model; else the first element of the list is w,
+the second one is q and the third is the constant
+Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>reference_trajectories: list of DataFrame</dt><dd><p>List of reference trajectories</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt>endpoints: dict</dt><dd><p>Initial and final states that the optimized trajectory
+must satisfy
+ex: {‘Var 1’: {‘start’: 109, ‘end’: 98, ‘delta’: 10},</p>
+<blockquote>
+<div><p>…}</p>
+</div></blockquote>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>constraints: list</dt><dd><p>Constraints the trajectory must complain with.
+Each constraint is model as a function; if the function
+is negative when applied on the right variable, then
+the constraint is considered as not satisfied.
+ex: [f1, f2] and if f1(trajectory) &lt; 0 then the
+constraint is not satisfied</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>basis: string</dt><dd><p>Name of the functional basis</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>basis_features: dict</dt><dd><p>Contain information on the basis for each state</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>independent_variable: dict</dt><dd><p>Describe the time-interval on which are defined the
+trajectories
+ex: {‘start’: 0, ‘end’: 1, ‘frequency’:.1}</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>n_best_trajectory_to_use: int, default=10</dt><dd><p>Number of trajectories to keep</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>opti_factor: float, default=2</dt><dd><p>Optimisation factor</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>sigma: ndarray, default=None</dt><dd><p>Matrix interpreted as an estimated covariance matrix</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>derivative: boolean, default=False</dt><dd><p>Compute the derivative or not</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>use_quadratic_programming: boolean, default=True</dt><dd><p>Use or not quadratic programming solver</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>n_jobs: int, default=None</dt><dd><p>Number of process to use - If None, sequential</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>verbose: boolean, default=True</dt><dd><p>Display the verbose or not</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pyrotor.pyrotor.Pyrotor.compute_gains">
+<code class="sig-name descname">compute_gains</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.pyrotor.Pyrotor.compute_gains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute gains/savings with respect to reference trajectories.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrotor.pyrotor.Pyrotor.compute_one_iteration">
+<code class="sig-name descname">compute_one_iteration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.pyrotor.Pyrotor.compute_one_iteration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an optimised trajectory which must satisfy the
+constraints.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrotor.pyrotor.Pyrotor.compute_optimal_trajectory">
+<code class="sig-name descname">compute_optimal_trajectory</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.pyrotor.Pyrotor.compute_optimal_trajectory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the optimized trajectory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrotor.pyrotor.Pyrotor.compute_relative_gains">
+<code class="sig-name descname">compute_relative_gains</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.pyrotor.Pyrotor.compute_relative_gains" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute relative gains/savings with respect to reference
+trajectories.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Florent Dewez, Benjamin Guedj, Arthur Talpaert, Vincent Vandewalle
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

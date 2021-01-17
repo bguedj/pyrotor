@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Overview &mdash; Pyrotor 0.0.1 documentation</title>
+  <title>Constraints module &mdash; Pyrotor 0.0.1 documentation</title>
   
 
   
@@ -82,7 +82,7 @@
             
               <!-- Local TOC -->
               <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">Overview</a></li>
+<li><a class="reference internal" href="#">Constraints module</a></li>
 </ul>
 </div>
             
@@ -129,13 +129,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Overview</li>
+      <li>Constraints module</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/usage/overview.md.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/modules/constraints.md.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,18 +148,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="overview">
-<h1>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h1>
-<p>PyRotor is a Python library for trajectory optimisation problems. It has been initially developed for the aeronautic setting but it is intended to be generic and to be used in a wide range of applications.</p>
-<p>The problem of optimising a trajectory can be modelled via optimal control approaches for which numerous numerical methods exist. Nevertheless the differential system involved in the modelling may be (partially) unknown in certain cases. Different strategies, such as parameter estimation methods, have been designed to circumvent this problem but the resulting system contains necessarily some uncertainties. This may impact at different levels the solution of the optimisation problem.</p>
-<p>In view of this, a different generic methodology has been proposed in this <a class="reference external" href="https://arxiv.org/abs/2011.11820">paper</a> to obtain optimised and realistic trajectories without involving noisy and complex dynamical systems. This is achieved by using more directly the available data: the approach leads to optimisation problems which are simply and naturally constrained by the data. The resulting problem focuses the search on a region centered on the data and involves estimated constraints.</p>
-<p>Currently PyRotor covers the case of cost functions defined via a quadratic instantaneous cost. Note that this instantaneous cost can be an estimated model resulting from a learning step. The optimisation process is performed in a finite-dimensional space onto which the trajectories have been projected. The two first functional bases implemented in PyRotor are actually given by the Legendre polynomials and B-splines. Future releases of PyRotor will cover more general instantaneous costs and bases.
-At the same time, PyRotor solves optimisation problems with</p>
-<ul class="simple">
-<li><p>linear boundary constraints (with tolerated errors);</p></li>
-<li><p>path constraints (including bounds on the variables).</p></li>
+  <div class="section" id="constraints-module">
+<h1>Constraints module<a class="headerlink" href="#constraints-module" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><span class="target" id="module-pyrotor.constraints"></span><p>Constraints verification.</p>
+<dl class="function">
+<dt id="pyrotor.constraints.is_in_constraints">
+<code class="sig-prename descclassname">pyrotor.constraints.</code><code class="sig-name descname">is_in_constraints</code><span class="sig-paren">(</span><em class="sig-param">trajectory</em>, <em class="sig-param">constraints</em>, <em class="sig-param">costs_by_time</em><span class="sig-paren">)</span><a class="headerlink" href="#pyrotor.constraints.is_in_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check wether or not the trajectory is complying with each
+constraint.</p>
+<dl class="simple">
+<dt>Inputs:</dt><dd><ul class="simple">
+<li><dl class="simple">
+<dt>trajectory: pandas DataFrame</dt><dd><p>Trajectory to be checked</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>constraints: list</dt><dd><p>Constraints the trajectory must complain with.
+Each constraint is model as a function; if the function
+is negative when applied on the right variable, then the
+constraint is considered as not satisfied.
+ex: [f1, f2] and if f1(trajectory) &lt; 0 then the
+constraint is not satisfied</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>costs_by_time: ndarray</dt><dd><p>Optimized trajectory cost (useful when the constraints
+depend on the trajectory cost)</p>
+</dd>
+</dl>
+</li>
 </ul>
-<p>We refer to the <a class="reference external" href="usage/tutorial">tutorial page</a> for an example on how PyRotor works. More examples will soon be available in the <a class="reference external" href="usage/features">example page</a>.</p>
+</dd>
+<dt>Output:</dt><dd><dl class="simple">
+<dt>is_in: bool</dt><dd><p>Wether or not constraints are satisfied</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
 </div>
 
 
