@@ -76,6 +76,12 @@ source_suffix = {
 
 autoclass_content = 'both'
 
+import recommonmark
+from recommonmark.transform import AutoStructify
+
+
+github_doc_root = 'https://github.com/bguedj/pyrotor/tree/master/docs/'
+
 # At the bottom of conf.py
 def setup(app):
     app.add_config_value('recommonmark_config', {
