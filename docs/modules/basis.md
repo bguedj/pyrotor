@@ -1,7 +1,7 @@
 ### Basis module
 
 ```eval_rst
-  .. automodule:: pyrotor.basis
+  .. automodule:: ..pyrotor.basis
      :members:
 
 ```
