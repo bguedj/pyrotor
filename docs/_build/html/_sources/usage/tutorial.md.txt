@@ -24,13 +24,13 @@ The user can also indicates a path to a quadratic model in pickle format, result
 
 ```python
 # Quadratic part
-q = np.array([[1,0],
+q = np.array([[0,0],
               [0,1]])
 # Linear part
 w = np.array([0,0])
 
 # Constant part
-c = 2.87
+c = 1
 
 quadratic_model = [c, w, q]
 ```
@@ -90,12 +90,18 @@ def f5(data):
 constraints = [f1, f2, f3, f4, f5]
 ```
 
-The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently only the Legendre polynomials basis is implemented but the methodology is not restricted to this family.
+The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently Legendre polynomials and B-splines are implemented but the methodology is not restricted to these two families.
+Note that if the user considers B-splines then it has to define the position of the internal knots in the interval [0,1].
 
 ```python
-basis = 'legendre'
-basis_dimension = {'x1': 4,
-                   'x2': 6}
+basis = 'bspline'
+if basis == 'legendre':
+    basis_features = {'x1': 4,
+                      'x2': 6}
+elif basis == 'bspline':
+    basis_features = {'knots': [.33, .66],
+                      'x1': 3,
+                      'x2': 4}
 ```
 
 We create now an instance to model our problem. Note that the user can choose the number of reference trajectories and the value of the optimisation factor. This factor models the balance between optimising and staying close to reference trajectories: the larger, the more we optimise.
@@ -108,7 +114,7 @@ mr_pyrotor = pyrotor.Pyrotor(quadratic_model,
                              endpoints,
                              constraints,
                              basis,
-                             basis_dimension,
+                             basis_features,
                              independent_variable,
                              n_best_trajectory_to_use=5,
                              opti_factor=1,

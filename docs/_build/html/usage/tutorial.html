@@ -166,13 +166,13 @@
 <p>The next step is to define the cost function. Currently PyRotor covers costs defined by the integral of a quadratic instantaneous cost. The user defines the matrix, the vector and the real number giving the quadratic instantaneous cost.
 The user can also indicates a path to a quadratic model in pickle format, resulting from a learning process; see the <a class="reference internal" href="../modules/objective_matrices.html#module-pyrotor.objective_matrices" title="pyrotor.objective_matrices"><a class="reference external" href="objective_matrices">objective_matrices</a></a> page.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quadratic part</span>
-<span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
+<span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span>
               <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
 <span class="c1"># Linear part</span>
 <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
 
 <span class="c1"># Constant part</span>
-<span class="n">c</span> <span class="o">=</span> <span class="mf">2.87</span>
+<span class="n">c</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="n">quadratic_model</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span>
 </pre></div>
@@ -226,10 +226,16 @@ The user can also indicates a path to a quadratic model in pickle format, result
 <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span><span class="n">f1</span><span class="p">,</span> <span class="n">f2</span><span class="p">,</span> <span class="n">f3</span><span class="p">,</span> <span class="n">f4</span><span class="p">,</span> <span class="n">f5</span><span class="p">]</span>
 </pre></div>
 </div>
-<p>The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently only the Legendre polynomials basis is implemented but the methodology is not restricted to this family.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;legendre&#39;</span>
-<span class="n">basis_dimension</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
-                   <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+<p>The trajectories are projected onto a finite-dimension space for the optimisation. Here we define the basis and the dimension for each variable. Currently Legendre polynomials and B-splines are implemented but the methodology is not restricted to these two families.
+Note that if the user considers B-splines then it has to define the position of the internal knots in the interval [0,1].</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">basis</span> <span class="o">=</span> <span class="s1">&#39;bspline&#39;</span>
+<span class="k">if</span> <span class="n">basis</span> <span class="o">==</span> <span class="s1">&#39;legendre&#39;</span><span class="p">:</span>
+    <span class="n">basis_features</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+                      <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="mi">6</span><span class="p">}</span>
+<span class="k">elif</span> <span class="n">basis</span> <span class="o">==</span> <span class="s1">&#39;bspline&#39;</span><span class="p">:</span>
+    <span class="n">basis_features</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;knots&#39;</span><span class="p">:</span> <span class="p">[</span><span class="o">.</span><span class="mi">33</span><span class="p">,</span> <span class="o">.</span><span class="mi">66</span><span class="p">],</span>
+                      <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+                      <span class="s1">&#39;x2&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>We create now an instance to model our problem. Note that the user can choose the number of reference trajectories and the value of the optimisation factor. This factor models the balance between optimising and staying close to reference trajectories: the larger, the more we optimise.
@@ -240,7 +246,7 @@ The user can also decide to use the quadratic programming solver ‘qp’ from <
                              <span class="n">endpoints</span><span class="p">,</span>
                              <span class="n">constraints</span><span class="p">,</span>
                              <span class="n">basis</span><span class="p">,</span>
-                             <span class="n">basis_dimension</span><span class="p">,</span>
+                             <span class="n">basis_features</span><span class="p">,</span>
                              <span class="n">independent_variable</span><span class="p">,</span>
                              <span class="n">n_best_trajectory_to_use</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
                              <span class="n">opti_factor</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
