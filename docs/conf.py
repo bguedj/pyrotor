@@ -15,7 +15,7 @@ import os
 import sys
 
 
-sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('..'))
 
 import recommonmark
 from recommonmark.transform import AutoStructify
@@ -69,10 +69,7 @@ html_static_path = ['_static']
 
 
 
-source_suffix = {
-    '.md': 'markdown',
-    '.rst': 'restructuredtext'
-}
+source_suffix = ['.rst', '.md']
 
 autoclass_content = 'both'
 
@@ -88,5 +85,6 @@ def setup(app):
             'url_resolver': lambda url: github_doc_root + url,
             'enable_eval_rst': True,
             'auto_toc_tree_section': 'Contents',
+            'enable_auto_doc_ref': True,
             }, True)
     app.add_transform(AutoStructify)
