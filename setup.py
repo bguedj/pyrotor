@@ -26,6 +26,6 @@ setup(name='pyrotor',
                         "pytest==5.3.1",
                         "pickleshare==0.7.5",
                         "scikit-learn==0.23.2",
-                        "sphinx==2.3.1",
-                        "recommonmark==0.6.0",
+                        "sphinx==3.4.3",
+                        #"recommonmark==0.6.0",
                         "sphinx-rtd-theme==0.5.0"])
