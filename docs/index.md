@@ -17,8 +17,17 @@ It has been created and developed by members of the [MODAL](https://team.inria.f
 ### API
 * [Pyrotor class](pyrotor.md)
 
+
+```eval_rst
+.. toctree::
+    :caption: Getting started
+    :maxdepth: 1
+
+    basis
+```
+
 ### In-depth documentation
-* [basis](basis.md)
+* [basis](basis.rst)
 * [constraints](constraints.md)
 * [cost_functions](cost_functions.md)
 * [data_analysis](data_analysis.md)
