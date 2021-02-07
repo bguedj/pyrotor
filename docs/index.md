@@ -18,7 +18,7 @@ It has been created and developed by members of the [MODAL](https://team.inria.f
 * [Pyrotor class](pyrotor.md)
 
 ### In-depth documentation
-* [basis](basis.rst)
+* [basis](basis.md)
 * [constraints](constraints.md)
 * [cost_functions](cost_functions.md)
 * [data_analysis](data_analysis.md)
