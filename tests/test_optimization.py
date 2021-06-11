@@ -54,6 +54,7 @@ def test_minimize_cvx():
     np.testing.assert_almost_equal(c_optimized, expected_c_optimized)
 
 def test_minimize_trust_constr():
+    # TODO: Test when model is sklearn model
     # Solve min ||x-np.ones||_2^2 such that x1 + x2 = 2 and x_{K-1} - x_K = 0
     # Here P = Id, q = -2 * np.ones, phi = [[1 1 0 ... 0 0],
     #                                       [0 0 0 ... 1 -1]],
@@ -70,6 +71,7 @@ def test_minimize_trust_constr():
     # Write W = -2 * np.ones + 2 * c_weight * sigma_inverse so that
     # q = W - 2 * c_weight * sigma_inverse = -2 * np.ones
     W = -2 * np.ones(K) + 2 * np.dot(sigma_inverse, c_weight)
+    model = [W, Q]
     # Create phi
     phi = np.zeros([2, K])
     phi[0, :2] += 1
@@ -82,7 +84,15 @@ def test_minimize_trust_constr():
     lin_const = LinearConstraint(phi, left_hs, right_hs)
     # Apply minimize_cvx()
     kappa = 1
-    c_optimized = minimize_trust_constr(Q, W, phi, lin_const, sigma_inverse, c_weight, kappa)
+    quadratic_model = True
+    basis = 'legendre'
+    basis_features = basis_dimension
+    independent_variable = {'start': 0, 'end': 10, 'points_nb': 1}
+    extra_info = {'basis': basis, 
+                  'basis_dimension': basis_dimension,
+                  'basis_features': basis_features, 
+                  'independent_variable': independent_variable}
+    c_optimized = minimize_trust_constr(model, lin_const, sigma_inverse, c_weight, kappa, quadratic_model, extra_info)
 
     expected_c_optimized = np.ones(K)
 

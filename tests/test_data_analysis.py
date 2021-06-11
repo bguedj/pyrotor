@@ -15,6 +15,7 @@ from pyrotor.data_analysis import compute_covariance
 from pyrotor.data_analysis import select_trajectories
 from pyrotor.data_analysis import compute_weights
 
+# TODO: Test function add_derivatives()
 
 def test_nb_samples_is_sufficient():
     X = np.random.rand(10, 3)

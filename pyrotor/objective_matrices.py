@@ -137,9 +137,8 @@ def compute_objective_matrices(basis, basis_features, basis_dimension,
             Contain information on the basis for each state
         - basis_dimension: dict
             Give the number of basis functions for each state
-        - quad_model: str or list
-            if str then it is the path to the folder containing the
-            pickle model; else the first element of the list is w and
+        - quad_model: list or sklearn model
+            if list, the first element of the list is w and
             the second one is q
         - derivative: boolean
             Take into account or not derivatives of states

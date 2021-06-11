@@ -55,7 +55,7 @@ def test_extend_matrix():
 
 
 def test_compute_objective_matrices():
-    # TODO: test in case 'quad_model' is a path for a trained model
+    # TODO: Test when quad_model is sklearn model
     # Test Legendre
     basis = 'legendre'
     basis_features = {}

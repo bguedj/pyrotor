@@ -13,8 +13,8 @@ from .cost_functions import compute_g
 from .log import log
 
 
-def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
-                         sigma_inverse, c_weight, opti_factor):
+def get_kappa_boundaries(reference_coefficients, format_model,
+                         sigma_inverse, c_weight, opti_factor, extra_info):
     """
     Give the possible minumum and maximum supposed values of kappa.
 
@@ -27,10 +27,10 @@ def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
     Inputs:
         - reference_coefficients: ndarray
             Coefficients of reference trajectories
-        - vector_q: ndarray
-            Matrix of the quadratic term
-        - vector_w: ndarray
-            Vector of the linear term (without intercept)
+        - format_model: list of arrays or sklearn model
+            Model of the cost; if list, the first element of the list is the
+            the integrated linear part W and the second one the integrated
+            quadratic part Q
         - sigma_inverse: ndarray
             Pseudoinverse of the covariance matrix of the reference
             coefficients
@@ -38,6 +38,9 @@ def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
             Coefficients of a weighted trajectory
         - opti_factor: float
             Optimisation factor
+        - extra_info: dict
+            Contains independent_variable, basis, basis_features and
+            basis_dimension dictionaries
     Outputs:
         - kappa_min: float
             Supposed possible minimum value of kappa; here set to 0
@@ -49,8 +52,9 @@ def get_kappa_boundaries(reference_coefficients, matrix_q, vector_w,
     for reference_coefficient in reference_coefficients:
         evaluations_f.append(compute_f(reference_coefficient, sigma_inverse,
                                        c_weight))
-        evaluations_g.append(compute_g(reference_coefficient, matrix_q,
-                                       vector_w))
+        evaluations_g.append(compute_g(reference_coefficient,
+                                       format_model,
+                                       extra_info))
     kappa_mean = compute_kappa_mean(evaluations_f, evaluations_g)
 
     kappa_min = 0
@@ -91,7 +95,7 @@ def compute_kappa_mean(evaluations_f, evaluations_g):
     evaluations_f = np.array(evaluations_f)
     evaluations_g = np.array(evaluations_g)
     kappa = np.abs(evaluations_f / evaluations_g)
-    
+
     return np.mean(kappa)
 
 

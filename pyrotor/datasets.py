@@ -31,5 +31,5 @@ def load_toy_dataset(dataset_name):
     for path in toy_dataset_paths:
         toy_trajectory = pd.read_csv(path, index_col=0)
         toy_dataset.append(toy_trajectory)
-        
+
     return toy_dataset

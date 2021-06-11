@@ -18,17 +18,27 @@ from pyrotor.iterations import iterate_through_kappas
 
 
 def test_get_kappa_boundaries():
+    # TODO: Test when model is sklearn model
     x = np.array([[1, 2], [1, 2]])
     Q = np.array([[1, 2], [3, 4]])
     W = np.array([2, 3])
+    model = [W, Q]
     sigma_inverse = np.array([[1, 2], [3, 4]])
     c_weight = np.array([1, 1])
     expected_kappa_min = 0
     expected_kappa_max = 0.4
     opti_factor = 2
-    kappa_min, kappa_max = get_kappa_boundaries(x, Q, W,
+    basis = 'legendre'
+    basis_dimension = {"A": 1, "B": 1}
+    basis_features = basis_dimension
+    independent_variable = {'start': 0, 'end': 1, 'points_nb': 2}
+    extra_info = {'basis': basis, 
+                  'basis_dimension': basis_dimension,
+                  'basis_features': basis_features, 
+                  'independent_variable': independent_variable}
+    kappa_min, kappa_max = get_kappa_boundaries(x, model,
                                                 sigma_inverse, c_weight,
-                                                opti_factor)
+                                                opti_factor, extra_info)
     assert kappa_min == expected_kappa_min
     assert kappa_max == expected_kappa_max
 

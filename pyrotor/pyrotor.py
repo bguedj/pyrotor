@@ -3,6 +3,7 @@
 
 import numpy as np
 import pandas as pd
+from sklearn.pipeline import Pipeline
 
 from .projection import trajectories_to_coefs
 from .projection import coef_to_trajectory
@@ -14,6 +15,7 @@ from .constraints import is_in_constraints
 
 from .objective_matrices import compute_objective_matrices
 
+from .cost_functions import load_model
 from .cost_functions import compute_cost
 from .cost_functions import compute_cost_by_time
 from .cost_functions import compute_trajectories_cost
@@ -35,7 +37,7 @@ class Pyrotor():
     """
 
     def __init__(self,
-                 quadratic_model,
+                 model,
                  reference_trajectories,
                  endpoints,
                  constraints,
@@ -46,6 +48,7 @@ class Pyrotor():
                  opti_factor=2,
                  sigma=None,
                  derivative=False,
+                 quadratic_model=False,
                  use_quadratic_programming=True,
                  n_jobs=None,
                  verbose=True):
@@ -53,11 +56,12 @@ class Pyrotor():
         Create a new PyPotor class.
 
         Inputs:
-            - quadratic_model: str or list
+            - model: str or list or sklearn model
                 if str then it is the path to the folder containing the
-                pickle model; else the first element of the list is w,
-                the second one is q and the third is the constant
-                Ex: (np.array([[1, 0], [2, 3]]), np.array([2, 1]), 8)
+                pickle model; else if list, the first element of the list is
+                the constant c, the second one is the linear part w and the
+                third one is the quadratic part q
+                Ex: (8, np.array([2, 1]), np.array([[1, 0], [2, 3]]))
             - reference_trajectories: list of DataFrame
                 List of reference trajectories
             - endpoints: dict
@@ -88,6 +92,8 @@ class Pyrotor():
                 Matrix interpreted as an estimated covariance matrix
             - derivative: boolean, default=False
                 Compute the derivative or not
+            - quadratic_model: bool
+                Indicate if the model is quadratic
             - use_quadratic_programming: boolean, default=True
                 Use or not quadratic programming solver
             - n_jobs: int, default=None
@@ -95,16 +101,21 @@ class Pyrotor():
             - verbose: boolean, default=True
                 Display the verbose or not
         """
-        self.quadratic_model = quadratic_model
         self.reference_trajectories = reference_trajectories
         self.constraints = constraints
         self.basis = basis
         self.basis_features = basis_features
         self.independent_variable = independent_variable
         self.derivative = derivative
+        self.quadratic_model = quadratic_model
         self.use_quadratic_programming = use_quadratic_programming
         self.n_jobs = n_jobs
         self.verbose = verbose
+
+        if type(model) == str:
+            self.model = load_model(model)
+        else:
+            self.model = model
 
         # Create basis_dimension dictionary containing dimension of each state
         if basis == 'legendre':
@@ -124,14 +135,22 @@ class Pyrotor():
             reference_trajectories_deriv = add_derivatives(
                 self.reference_trajectories, self.basis_dimension)
             self.reference_costs = compute_trajectories_cost(
-                reference_trajectories_deriv, self.quadratic_model)
+                reference_trajectories_deriv,
+                self.model,
+                independent_variable)
         else:
             self.reference_costs = compute_trajectories_cost(
-                self.reference_trajectories, self.quadratic_model)
-        # Compute matrices involved in the final cost function
-        self.W, self.Q = compute_objective_matrices(
-                self.basis, self.basis_features, self.basis_dimension,
-                self.quadratic_model, self.derivative)
+                self.reference_trajectories, self.model, independent_variable)
+        # If quadratic model, compute matrices involved in the final cost
+        # function and format the model [W, Q]
+        if self.quadratic_model:
+            self.W, self.Q = compute_objective_matrices(
+                    self.basis, self.basis_features, self.basis_dimension,
+                    self.model, self.derivative)
+            self.format_model = [self.W, self.Q]
+        # Else the formatted model is the model
+        else:
+            self.format_model = self.model
         # Get or compute the variance-covariance and precision matrices
         if sigma is not None:
             self.sigma = sigma
@@ -158,18 +177,25 @@ class Pyrotor():
             reference_trajectories_deriv = add_derivatives(
                 self.reference_trajectories, self.basis_dimension)
             self.reference_costs = compute_trajectories_cost(
-                reference_trajectories_deriv, self.quadratic_model)
+                reference_trajectories_deriv,
+                self.model,
+                independent_variable)
         else:
             self.reference_costs = compute_trajectories_cost(
-                self.reference_trajectories, self.quadratic_model)
+                self.reference_trajectories, self.model, independent_variable)
         # Compute weights and deduce weighted coefficient and bounds of kappa
         # for optimization
         self.weights = compute_weights(self.reference_costs)
         self.c_weight = compute_weighted_coef(
             ref_coefficients, self.weights, self.basis_dimension)
+        # Define a dictionary containing some information on the setting
+        self.extra_info = {'basis': self.basis,
+                           'basis_dimension': self.basis_dimension,
+                           'basis_features': self.basis_features,
+                           'independent_variable': self.independent_variable}
         self.kappa_min, self.kappa_max = get_kappa_boundaries(
-            ref_coefficients, self.Q, self.W, self.sigma_inverse,
-            self.c_weight, opti_factor)
+            ref_coefficients, self.format_model, self.sigma_inverse,
+            self.c_weight, opti_factor, self.extra_info)
 
     def compute_one_iteration(self):
         """
@@ -178,8 +204,9 @@ class Pyrotor():
         """
         try:
             c_opt = compute_optimized_coefficients(
-                self.Q, self.W, self.phi, self.linear_conditions,
+                self.format_model, self.phi, self.linear_conditions,
                 self.sigma_inverse, self.c_weight, self.kappa,
+                self.quadratic_model, self.extra_info,
                 self.use_quadratic_programming)
             # Construct optimized trajectory from coefficients
             self.trajectory = coef_to_trajectory(
@@ -190,14 +217,14 @@ class Pyrotor():
                 trajectory = add_derivatives(
                     [self.trajectory], self.basis_dimension)
                 self.cost_by_time = compute_cost_by_time(
-                    trajectory[0], self.quadratic_model)
+                    trajectory[0], self.model)
                 self.cost = compute_cost(
-                    trajectory[0], self.quadratic_model)
+                    trajectory[0], self.model, self.independent_variable)
             else:
                 self.cost_by_time = compute_cost_by_time(
-                    self.trajectory, self.quadratic_model)
+                    self.trajectory, self.model)
                 self.cost = compute_cost(
-                    self.trajectory, self.quadratic_model)
+                    self.trajectory, self.model, self.independent_variable)
             self.is_valid = is_in_constraints(
                 self.trajectory, self.constraints, self.cost_by_time)
         except ValueError as e:

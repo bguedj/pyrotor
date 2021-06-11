@@ -33,7 +33,7 @@ def nb_samples_is_sufficient(dataset):
 def compute_covariance(dataset):
     """
     Estimate covariance and precision matrices from data X.
-    
+
     Depending on samples number, use either EmpiricalCovariance or
     GraphicalLasso methods from scikit-learn.
 
@@ -88,7 +88,7 @@ def select_trajectories(trajectories, trajectories_cost, trajectories_nb):
                      key=lambda k: trajectories_cost[k])
     # Keep the first ones
     best_trajectories = [trajectories[i] for i in indexes[:trajectories_nb]]
-    
+
     return best_trajectories
 
 
