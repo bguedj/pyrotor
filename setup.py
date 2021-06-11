@@ -6,7 +6,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(name='pyrotor',
-      version='1.0.2',
+      version='1.0.3',
       description='Trajectory optimization package based on data',
       long_description=README,
       long_description_content_type='text/markdown',
@@ -26,6 +26,6 @@ setup(name='pyrotor',
                         "pytest==5.3.1",
                         "pickleshare==0.7.5",
                         "scikit-learn==0.23.2",
-                        "sphinx==2.3.1",
-                        "recommonmark==0.6.0",
+                        "sphinx==3.4.3",
+                        #"recommonmark==0.6.0",
                         "sphinx-rtd-theme==0.5.0"])
