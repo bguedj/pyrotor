@@ -27,5 +27,4 @@ setup(name='pyrotor',
                         "pickleshare==0.7.5",
                         "scikit-learn==0.23.2",
                         "sphinx==3.4.3",
-                        #"recommonmark==0.6.0",
                         "sphinx-rtd-theme==0.5.0"])

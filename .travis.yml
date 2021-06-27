@@ -13,3 +13,9 @@ install:
 # command to run tests
 script:
   - pytest
+
+# deploy:
+#   provider: pypi
+#   username: <username>
+#   password: <encrypted password>
+#   edge: true # opt in to dpl v2
