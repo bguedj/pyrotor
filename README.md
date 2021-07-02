@@ -1,5 +1,6 @@
 
 [![](https://travis-ci.com/bguedj/pyrotor.svg?token=mBozP3BYCpx6zxMpJQAQ&branch=master)](https://travis-ci.com/github/bguedj/pyrotor)
+[![Documentation Status](https://readthedocs.org/projects/pyrotor/badge/?version=latest)](https://pyrotor.readthedocs.io/en/latest/?badge=latest)
 
 # PyRotor - Python Route Trajectory Optimiser
 PyRotor is a Python library for trajectory optimisation problems. Initially developed for the aeronautic setting, it is intended to be generic and to be used in a wide range of applications.
