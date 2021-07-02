@@ -20,7 +20,7 @@ print(reference_trajectories[0].head())
 ```
 
 The next step is to define the cost function. Currently PyRotor covers costs defined by the integral of a quadratic instantaneous cost. The user defines the matrix, the vector and the real number giving the quadratic instantaneous cost.
-The user can also indicates a path to a quadratic model in pickle format, resulting from a learning process; see the [objective_matrices](objective_matrices.md) page.
+The user can also indicates a path to a quadratic model in pickle format, resulting from a learning process; see the [objective_matrices](core_module/objective_matrices.md) page.
 
 ```python
 # Quadratic part
