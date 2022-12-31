@@ -6,7 +6,7 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(name='pyrotor',
-      version='1.0.3',
+      version='1.0.4',
       description='Trajectory optimization package based on data',
       long_description=README,
       long_description_content_type='text/markdown',
